@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boost Boss</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="phone-frame">
+        <div class="hero-glow hero-glow-top"></div>
+        <div class="hero-glow hero-glow-bottom"></div>
+
+        <div class="screen" id="order-screen">
+          <header class="hero">
+            <div class="brand-row">
+              <div>
+                <p class="eyebrow">Babson Delivery</p>
+                <h1>Boost Boss</h1>
+              </div>
+              <div class="brand-mark">BB</div>
+            </div>
+
+            <p class="hero-copy">
+              Snacks, meals, and campus store runs delivered anywhere on campus in under 10 minutes.
+            </p>
+          </header>
+
+          <section class="status-card">
+            <div>
+              <p class="card-label">Live availability</p>
+              <div class="status-line">
+                <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+                <span class="status-text" id="status-text">Runners available</span>
+              </div>
+            </div>
+            <span class="availability-pill" id="availability-pill">Live</span>
+          </section>
+
+          <form id="order-form" class="order-form">
+            <p class="status-message hidden" id="checkout-message" role="status" aria-live="polite"></p>
+            <section class="field-group">
+              <label class="field-label">Delivery type</label>
+              <div class="segmented-control">
+                <label>
+                  <input
+                    type="radio"
+                    name="deliveryType"
+                    value="Straight to dorm (if before 9pm)"
+                    checked
+                  />
+                  <span>Straight to dorm</span>
+                </label>
+                <label>
+                  <input type="radio" name="deliveryType" value="Drop off at building door" />
+                  <span>Drop off at building door</span>
+                </label>
+                <label>
+                  <input type="radio" name="deliveryType" value="Meet outside" />
+                  <span>Meet outside</span>
+                </label>
+                <label>
+                  <input type="radio" name="deliveryType" value="In class" />
+                  <span>In class</span>
+                </label>
+              </div>
+            </section>
+
+            <section class="field-group hidden" id="delivery-details-group">
+              <label class="field-label" for="delivery-details" id="delivery-details-label">
+                Delivery details
+              </label>
+              <div class="input-shell">
+                <input id="delivery-details" name="deliveryDetails" type="text" />
+              </div>
+              <p class="field-note hidden" id="delivery-details-note"></p>
+            </section>
+
+            <section class="field-group">
+              <label class="field-label">Delivery location type</label>
+              <div class="location-toggle">
+                <label>
+                  <input type="radio" name="locationType" value="Dorm" checked />
+                  <span>Dorm</span>
+                </label>
+                <label>
+                  <input type="radio" name="locationType" value="Babson building" />
+                  <span>Babson building</span>
+                </label>
+              </div>
+            </section>
+
+            <section class="field-group" id="dorm-fields">
+              <label class="field-label" for="dorm-building">Dorm building</label>
+              <div class="input-shell">
+                <select id="dorm-building" name="dormBuilding" required>
+                  <option value="" disabled selected>Select your dorm</option>
+                  <option value="Bryant Hall">Bryant Hall</option>
+                  <option value="Canfield Hall">Canfield Hall</option>
+                  <option value="Keith Hall">Keith Hall</option>
+                  <option value="Coleman Hall">Coleman Hall</option>
+                  <option value="Forest Hall">Forest Hall</option>
+                  <option value="Mandell Family Hall">Mandell Family Hall</option>
+                  <option value="McCullough Hall">McCullough Hall</option>
+                  <option value="Park Manor Central">Park Manor Central</option>
+                  <option value="Park Manor North">Park Manor North</option>
+                  <option value="Park Manor South">Park Manor South</option>
+                  <option value="Park Manor West">Park Manor West</option>
+                  <option value="Pietz Hall">Pietz Hall</option>
+                  <option value="Publishers Hall">Publishers Hall</option>
+                  <option value="Putney Hall">Putney Hall</option>
+                  <option value="Van Winkle Hall">Van Winkle Hall</option>
+                  <option value="Woodland Hill Building 8">Woodland Hill Building 8</option>
+                  <option value="Woodland Hill Buildings 9 and 10">Woodland Hill Buildings 9 and 10</option>
+                  <option value="Woodside">Woodside</option>
+                </select>
+              </div>
+            </section>
+
+            <section class="field-group" id="dorm-room-group">
+              <label class="field-label" for="room-number">Dorm room number</label>
+              <div class="input-shell">
+                <input
+                  id="room-number"
+                  name="roomNumber"
+                  type="text"
+                  placeholder="Room number"
+                  required
+                />
+              </div>
+              <p class="field-note">
+                May not be able to deliver directly to dorm at night time due to one card access.
+              </p>
+              <div class="input-shell">
+                <textarea
+                  id="after-hours-details"
+                  name="afterHoursDetails"
+                  rows="3"
+                  placeholder="If this case occurs, what door do you want food to be dropped off or where do you want to meet? If you do not include details we will just send you a photo of where we left your food."
+                ></textarea>
+              </div>
+              <p class="field-note hidden" id="dorm-payment-note">
+                Drop off at dorm door only applies if you send payment through Apple Pay or Venmo immediately upon filling out the form.
+              </p>
+            </section>
+
+            <section class="field-group hidden" id="van-winkle-group">
+              <label class="field-label" for="van-winkle-community">
+                Which community do you live in?
+              </label>
+              <div class="input-shell">
+                <input
+                  id="van-winkle-community"
+                  name="vanWinkleCommunity"
+                  type="text"
+                  placeholder="Enter your Van Winkle community"
+                />
+              </div>
+            </section>
+
+            <section class="field-group hidden" id="building-fields">
+              <label class="field-label" for="building">Babson building</label>
+              <div class="input-shell">
+                <select id="building" name="building">
+                  <option value="" disabled selected>Select a campus building</option>
+                  <option value="Babson Hall">Babson Hall</option>
+                  <option value="Blank Center">Blank Center</option>
+                  <option value="Herring Family Entrepreneurial Leadership Village">Herring Family Entrepreneurial Leadership Village</option>
+                  <option value="Hollister Hall">Hollister Hall</option>
+                  <option value="Horn Computer Center">Horn Computer Center</option>
+                  <option value="Horn Library">Horn Library</option>
+                  <option value="Kriebel Hall">Kriebel Hall</option>
+                  <option value="Len Green Recreation and Athletics Complex">Len Green Recreation and Athletics Complex</option>
+                  <option value="Malloy Hall">Malloy Hall</option>
+                  <option value="Nichols Hall">Nichols Hall</option>
+                  <option value="Olin Hall">Olin Hall</option>
+                  <option value="Reynolds Campus Center">Reynolds Campus Center</option>
+                  <option value="Sorenson Center for the Arts">Sorenson Center for the Arts</option>
+                  <option value="Stephen D. Cutler Center for Investments and Finance">Stephen D. Cutler Center for Investments and Finance</option>
+                  <option value="Tomasso Hall">Tomasso Hall</option>
+                  <option value="Trim Dining Hall">Trim Dining Hall</option>
+                  <option value="Weissman Foundry">Weissman Foundry</option>
+                  <option value="Webster Center">Webster Center</option>
+                </select>
+              </div>
+            </section>
+
+            <section class="field-group hidden" id="classroom-group">
+              <label class="field-label" for="classroom-details">
+                Classroom number / where are you
+              </label>
+              <div class="input-shell">
+                <textarea
+                  id="classroom-details"
+                  name="classroomDetails"
+                  rows="3"
+                  placeholder="Floor, study room, classroom number, or general pointers"
+                ></textarea>
+              </div>
+              <p class="field-note">We'll leave it at your class door.</p>
+            </section>
+
+            <section class="field-group">
+              <label class="field-label" for="order">Your name</label>
+              <div class="input-shell">
+                <input id="order" name="order" type="text" placeholder="Type your full name" required />
+              </div>
+            </section>
+
+            <section class="field-group">
+              <label class="field-label" for="ordered-from">Location ordered from</label>
+              <div class="input-shell">
+                <select id="ordered-from" name="orderedFrom" required>
+                  <option value="" disabled selected>Select a pickup location</option>
+                  <option value="Centennial Cafe">Centennial Cafe</option>
+                  <option value="Chick n Bap">Chick n Bap</option>
+                  <option value="Sal's Pizza">Sal's Pizza</option>
+                  <option value="Shahs">Shahs</option>
+                  <option value="Helv Village Coffee House">Helv Village Coffee House</option>
+                  <option value="Sal's Pizza at VCH">Sal's Pizza at VCH</option>
+                  <option value="Cantina Verde">Cantina Verde</option>
+                  <option value="Deli at the Deli Press">Deli at the Deli Press</option>
+                  <option value="Market at Reys">Market at Reys</option>
+                  <option value="Dunkin">Dunkin</option>
+                  <option value="Desi Eats">Desi Eats</option>
+                  <option value="Rogers">Rogers</option>
+                  <option value="Smoothie Lab">Smoothie Lab</option>
+                </select>
+              </div>
+            </section>
+
+            <section class="field-group">
+              <label class="field-label" for="phone">Phone number</label>
+              <div class="input-shell">
+                <input id="phone" name="phone" type="tel" placeholder="(781) 555-0108" required />
+              </div>
+            </section>
+
+            <section class="field-group">
+              <label class="field-label" for="order-screenshot">
+                Screenshot your order and upload it
+              </label>
+              <div class="input-shell">
+                <input id="order-screenshot" name="orderScreenshot" type="file" accept="image/*" required />
+              </div>
+              <p class="field-note">
+                Upload a screenshot of the order you placed so Boost Boss can verify the details.
+              </p>
+            </section>
+
+            <section class="field-group">
+              <label class="field-label">Payment method</label>
+              <div class="payment-grid">
+                <label>
+                  <input type="radio" name="paymentMethod" value="Venmo" checked />
+                  <span>Venmo</span>
+                </label>
+                <label>
+                  <input type="radio" name="paymentMethod" value="Apple Pay" />
+                  <span>Apple Pay</span>
+                </label>
+                <label>
+                  <input type="radio" name="paymentMethod" value="Cash" />
+                  <span>Cash</span>
+                </label>
+                <label>
+                  <input type="radio" name="paymentMethod" value="Square" />
+                  <span>Square (in person swipe or tap)</span>
+                </label>
+              </div>
+              <p class="field-note hidden" id="square-note">
+                Square means you'll swipe or tap your card in person when your order arrives.
+              </p>
+              <p class="field-note hidden" id="digital-payment-note">
+                Send money to 571-619-4416 as soon as you fill out the form.
+              </p>
+            </section>
+
+            <section class="stats-grid">
+              <article class="info-card fee-card">
+                <div class="info-header">
+                  <p class="card-label">Delivery fee</p>
+                  <span class="price-tag">$3 flat rate</span>
+                </div>
+                <div class="fee-bar">
+                  <span></span>
+                </div>
+              </article>
+            </section>
+
+            <button type="submit" class="primary-button">Place order</button>
+          </form>
+        </div>
+
+        <div class="screen hidden" id="confirmation-screen">
+          <section class="confirmation-card">
+            <div class="confirmation-icon">✓</div>
+            <p class="eyebrow">Order confirmed</p>
+            <h2>Boost Boss is on the move.</h2>
+            <p class="confirmation-copy">
+              Screenshot this screen for your confirmation and keep your phone nearby in case your runner texts.
+            </p>
+
+            <div class="confirmation-details">
+              <article>
+                <p class="card-label">Delivery location</p>
+                <p id="confirmation-location">Park Manor West</p>
+              </article>
+              <article>
+                <p class="card-label">ETA</p>
+                <p>5 to 10 minutes</p>
+              </article>
+              <article>
+                <p class="card-label">Drop-off</p>
+                <p id="confirmation-type">Drop at door</p>
+              </article>
+              <article>
+                <p class="card-label">Payment</p>
+                <p id="confirmation-payment">Apple Pay</p>
+              </article>
+            </div>
+
+            <button type="button" class="primary-button" id="new-order-button">Place another order</button>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
