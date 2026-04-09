@@ -164,7 +164,7 @@ function showConfirmation(data) {
   const deliveryDetails = data.deliveryDetails;
   const deliveryType = data.deliveryType;
   confirmationType.textContent = deliveryDetails ? `${deliveryType} - ${deliveryDetails}` : deliveryType;
-  confirmationPayment.textContent = data.paymentMethod;
+  confirmationPayment.textContent = "571-619-4416";
 
   orderScreen.classList.add("hidden");
   confirmationScreen.classList.remove("hidden");
