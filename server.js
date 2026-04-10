@@ -17,11 +17,14 @@ const pokeApiToken = process.env.POKE_API_TOKEN || "";
 
 const app = express();
 const publicDir = __dirname;
-const ordersFile = path.join(__dirname, "data", "orders.json");
-const statusFile = path.join(__dirname, "data", "status.json");
-const uploadsDir = path.join(__dirname, "uploads");
+const dataDir = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(__dirname, "data");
+const ordersFile = path.join(dataDir, "orders.json");
+const statusFile = path.join(dataDir, "status.json");
+const uploadsDir = path.join(dataDir, "uploads");
 
-fs.mkdirSync(path.dirname(ordersFile), { recursive: true });
+fs.mkdirSync(dataDir, { recursive: true });
 fs.mkdirSync(uploadsDir, { recursive: true });
 
 const upload = multer({
