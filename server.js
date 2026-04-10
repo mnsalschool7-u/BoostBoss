@@ -4,12 +4,14 @@ const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv");
 const multer = require("multer");
+const nodemailer = require("nodemailer");
 
 dotenv.config();
 
 const requiredEnvVars = [];
 const missingEnvVars = requiredEnvVars.filter((name) => !process.env[name]);
 const adminPassword = process.env.ADMIN_PASSWORD || "";
+const notificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || "";
 
 const app = express();
 const publicDir = __dirname;
@@ -40,6 +42,19 @@ const upload = multer({
     callback(new Error("Only image uploads are supported."));
   },
 });
+
+const smtpConfigured = Boolean(process.env.SMTP_USER && process.env.SMTP_PASS && notificationEmail);
+const mailTransport = smtpConfigured
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: `${process.env.SMTP_SECURE || "true"}` !== "false",
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
+  : null;
 
 function readOrders() {
   try {
@@ -137,6 +152,36 @@ function summarizeLocation(order) {
   return `${order.building} - ${order.classroomDetails}`;
 }
 
+async function sendOrderNotification(order) {
+  if (!mailTransport || !notificationEmail) {
+    return false;
+  }
+
+  const deliveryLine = order.deliveryDetails
+    ? `${order.deliveryType} - ${order.deliveryDetails}`
+    : order.deliveryType;
+
+  await mailTransport.sendMail({
+    from: process.env.SMTP_USER,
+    to: notificationEmail,
+    subject: `New Boost Boss order from ${order.customerName}`,
+    text: [
+      `New Boost Boss order received.`,
+      ``,
+      `Name: ${order.customerName}`,
+      `Phone: ${order.phone}`,
+      `Pickup location: ${order.orderedFrom}`,
+      `Delivery location: ${order.locationSummary}`,
+      `Delivery type: ${deliveryLine}`,
+      `Payment method: ${order.paymentMethod}`,
+      `Screenshot: ${order.screenshotPath ? `${process.env.PUBLIC_BASE_URL || ""}${order.screenshotPath}` : "Uploaded on server"}`,
+      `Order ID: ${order.sessionId}`,
+    ].join("\n"),
+  });
+
+  return true;
+}
+
 app.use(express.json());
 app.use(express.static(publicDir));
 app.use("/uploads", express.static(uploadsDir));
@@ -224,7 +269,7 @@ app.get("/api/orders/:sessionId", requireAdmin, (req, res) => {
   }
 });
 
-app.post("/api/manual-order", (req, res) => {
+app.post("/api/manual-order", async (req, res) => {
   const order = req.body;
 
   if (!order.customerName || !order.phone || !order.orderedFrom || !order.paymentMethod) {
@@ -250,7 +295,14 @@ app.post("/api/manual-order", (req, res) => {
   };
 
   upsertOrder(manualOrder);
-  return res.json(manualOrder);
+
+  try {
+    const notificationSent = await sendOrderNotification(manualOrder);
+    return res.json({ ...manualOrder, notificationSent });
+  } catch (error) {
+    console.error("Email notification failed:", error.message);
+    return res.json({ ...manualOrder, notificationSent: false });
+  }
 });
 
 app.get("*", (_req, res) => {

@@ -7,6 +7,7 @@ const confirmationScreen = document.getElementById("confirmation-screen");
 const confirmationLocation = document.getElementById("confirmation-location");
 const confirmationType = document.getElementById("confirmation-type");
 const confirmationPayment = document.getElementById("confirmation-payment");
+const confirmationSendTo = document.getElementById("confirmation-send-to");
 const newOrderButton = document.getElementById("new-order-button");
 const checkoutMessage = document.getElementById("checkout-message");
 const locationTypeInputs = document.querySelectorAll('input[name="locationType"]');
@@ -164,7 +165,8 @@ function showConfirmation(data) {
   const deliveryDetails = data.deliveryDetails;
   const deliveryType = data.deliveryType;
   confirmationType.textContent = deliveryDetails ? `${deliveryType} - ${deliveryDetails}` : deliveryType;
-  confirmationPayment.textContent = "571-619-4416";
+  confirmationPayment.textContent = data.paymentMethod;
+  confirmationSendTo.textContent = "571-619-4416";
 
   orderScreen.classList.add("hidden");
   confirmationScreen.classList.remove("hidden");
