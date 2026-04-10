@@ -12,6 +12,8 @@ const requiredEnvVars = [];
 const missingEnvVars = requiredEnvVars.filter((name) => !process.env[name]);
 const adminPassword = process.env.ADMIN_PASSWORD || "";
 const notificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || "";
+const pokeWebhookUrl = process.env.POKE_WEBHOOK_URL || "";
+const pokeApiToken = process.env.POKE_API_TOKEN || "";
 
 const app = express();
 const publicDir = __dirname;
@@ -182,6 +184,35 @@ async function sendOrderNotification(order) {
   return true;
 }
 
+async function sendPokeNotification(order) {
+  if (!pokeWebhookUrl || !pokeApiToken) {
+    return false;
+  }
+
+  const response = await fetch(pokeWebhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${pokeApiToken}`,
+    },
+    body: JSON.stringify({
+      name: order.customerName,
+      phone: order.phone,
+      pickup: order.orderedFrom,
+      delivery: order.locationSummary,
+      type: order.deliveryType,
+      payment: order.paymentMethod,
+      orderId: order.sessionId,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Poke notification failed with status ${response.status}`);
+  }
+
+  return true;
+}
+
 app.use(express.json());
 app.use(express.static(publicDir));
 app.use("/uploads", express.static(uploadsDir));
@@ -296,13 +327,22 @@ app.post("/api/manual-order", async (req, res) => {
 
   upsertOrder(manualOrder);
 
+  let emailNotificationSent = false;
+  let pokeNotificationSent = false;
+
   try {
-    const notificationSent = await sendOrderNotification(manualOrder);
-    return res.json({ ...manualOrder, notificationSent });
+    emailNotificationSent = await sendOrderNotification(manualOrder);
   } catch (error) {
     console.error("Email notification failed:", error.message);
-    return res.json({ ...manualOrder, notificationSent: false });
   }
+
+  try {
+    pokeNotificationSent = await sendPokeNotification(manualOrder);
+  } catch (error) {
+    console.error("Poke notification failed:", error.message);
+  }
+
+  return res.json({ ...manualOrder, emailNotificationSent, pokeNotificationSent });
 });
 
 app.get("*", (_req, res) => {
