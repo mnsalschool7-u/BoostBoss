@@ -86,7 +86,7 @@ function readAvailabilityStatus() {
     };
   } catch (error) {
     if (error.code === "ENOENT") {
-      return { isOpen: true, updatedAt: null };
+      return { isOpen: false, updatedAt: null };
     }
 
     throw error;
