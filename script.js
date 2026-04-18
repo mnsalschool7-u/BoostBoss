@@ -175,7 +175,9 @@ function syncPaymentFields() {
   squareOnlineNote.classList.toggle("hidden", selectedPayment !== "Card-Pay online");
   digitalPaymentNote.classList.toggle(
     "hidden",
-    selectedPayment !== "Venmo" && selectedPayment !== "Apple Cash / Messages"
+    selectedPayment !== "Venmo" &&
+      selectedPayment !== "Apple Cash / Messages" &&
+      selectedPayment !== "Cash App"
   );
   venmoLink.classList.toggle("hidden", selectedPayment !== "Venmo");
   applePayInstructions.classList.toggle("hidden", selectedPayment !== "Apple Cash / Messages");
