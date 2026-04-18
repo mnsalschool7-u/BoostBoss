@@ -35,6 +35,7 @@ const squareOnlineNote = document.getElementById("square-online-note");
 const digitalPaymentNote = document.getElementById("digital-payment-note");
 const venmoLink = document.getElementById("venmo-link");
 const applePayInstructions = document.getElementById("apple-pay-instructions");
+const messagesLink = document.getElementById("messages-link");
 const applePaySquareLink = document.getElementById("apple-pay-square-link");
 const squareLink = document.getElementById("square-link");
 const orderScreenshotInput = document.getElementById("order-screenshot");
@@ -171,6 +172,7 @@ function syncPaymentFields() {
   );
   venmoLink.classList.toggle("hidden", selectedPayment !== "Venmo");
   applePayInstructions.classList.toggle("hidden", selectedPayment !== "Apple Cash / Messages");
+  messagesLink.classList.toggle("hidden", selectedPayment !== "Apple Cash / Messages");
   applePaySquareLink.classList.toggle("hidden", selectedPayment !== "Apple Pay through Square");
   squareLink.classList.toggle("hidden", selectedPayment !== "Square online");
 }
