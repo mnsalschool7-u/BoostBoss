@@ -258,6 +258,17 @@ h2 {
   gap: 16px;
 }
 
+.order-form.form-disabled {
+  opacity: 0.62;
+}
+
+.order-form.form-disabled input,
+.order-form.form-disabled select,
+.order-form.form-disabled textarea,
+.order-form.form-disabled button {
+  cursor: not-allowed;
+}
+
 .feedback-card {
   margin-top: 18px;
   padding: 18px;

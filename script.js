@@ -44,6 +44,7 @@ const feedbackForm = document.getElementById("feedback-form");
 const feedbackSubmitButton = document.getElementById("feedback-submit-button");
 const feedbackMessageStatus = document.getElementById("feedback-message-status");
 const buttonDefaultLabels = new Map([[submitButton, submitButton.textContent]]);
+let runnersAvailable = false;
 
 function setMessage(message) {
   checkoutMessage.textContent = message;
@@ -63,12 +64,18 @@ function setFeedbackMessage(message) {
 }
 
 function renderAvailabilityState(isOpen) {
+  runnersAvailable = isOpen;
   statusDot.style.background = isOpen ? "var(--green-500)" : "var(--red)";
   statusDot.style.boxShadow = isOpen
     ? "0 0 0 6px rgba(31, 143, 95, 0.16)"
     : "0 0 0 6px rgba(201, 75, 75, 0.16)";
   statusText.textContent = isOpen ? "Runners available" : "No runners available";
   availabilityPill.textContent = isOpen ? "Live" : "Offline";
+  orderForm.classList.toggle("form-disabled", !isOpen);
+  orderForm.querySelectorAll("input, select, textarea, button").forEach((field) => {
+    field.disabled = !isOpen;
+  });
+  setMessage(isOpen ? "" : "Ordering is paused right now because no runners are available.");
 }
 
 async function loadAvailabilityState() {
@@ -245,6 +252,11 @@ async function uploadScreenshot() {
 }
 
 async function submitManualOrder(activeButton) {
+  if (!runnersAvailable) {
+    setMessage("Ordering is paused right now because no runners are available.");
+    return;
+  }
+
   if (!orderForm.reportValidity()) {
     return;
   }
