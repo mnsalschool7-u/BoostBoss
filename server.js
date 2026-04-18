@@ -169,8 +169,9 @@ function requireAdmin(req, res, next) {
 
 function summarizeLocation(order) {
   if (order.locationType === "Dorm") {
+    const dormBuilding = order.woodlandHillBuilding || order.dormBuilding;
     const community = order.vanWinkleCommunity ? `, ${order.vanWinkleCommunity}` : "";
-    return `${order.dormBuilding} Room ${order.roomNumber}${community}`;
+    return `${dormBuilding} Room ${order.roomNumber}${community}`;
   }
 
   return `${order.building} - ${order.classroomDetails}`;
@@ -399,6 +400,7 @@ app.post("/api/manual-order", async (req, res) => {
     deliveryDetails: order.deliveryDetails || "",
     locationType: order.locationType,
     locationSummary: summarizeLocation(order),
+    woodlandHillBuilding: order.woodlandHillBuilding || "",
     screenshotPath: order.screenshotPath || "",
     createdAt: new Date().toISOString(),
     loggedAt: new Date().toISOString(),

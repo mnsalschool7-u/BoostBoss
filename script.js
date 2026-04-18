@@ -16,6 +16,8 @@ const dormRoomGroup = document.getElementById("dorm-room-group");
 const dormBuildingSelect = document.getElementById("dorm-building");
 const roomNumberInput = document.getElementById("room-number");
 const dormPaymentNote = document.getElementById("dorm-payment-note");
+const woodlandHillGroup = document.getElementById("woodland-hill-group");
+const woodlandHillBuildingSelect = document.getElementById("woodland-hill-building");
 const vanWinkleGroup = document.getElementById("van-winkle-group");
 const vanWinkleCommunityInput = document.getElementById("van-winkle-community");
 const buildingFields = document.getElementById("building-fields");
@@ -84,14 +86,17 @@ function syncLocationFields() {
   const isBuilding = selectedType === "Babson building";
   const selectedDorm = dormBuildingSelect.value || dormBuildingSelect.selectedOptions[0]?.textContent || "";
   const isVanWinkle = isDorm && selectedDorm.toLowerCase().includes("van winkle");
+  const isWoodlandHill = isDorm && selectedDorm.toLowerCase() === "woodland hill";
 
   dormFields.classList.toggle("hidden", !isDorm);
+  woodlandHillGroup.classList.toggle("hidden", !isWoodlandHill);
   dormRoomGroup.classList.toggle("hidden", !isDorm);
   buildingFields.classList.toggle("hidden", !isBuilding);
   classroomGroup.classList.toggle("hidden", !isBuilding);
   vanWinkleGroup.classList.toggle("hidden", !isVanWinkle);
 
   dormBuildingSelect.required = isDorm;
+  woodlandHillBuildingSelect.required = isWoodlandHill;
   roomNumberInput.required = isDorm;
   buildingSelect.required = isBuilding;
   classroomDetailsInput.required = isBuilding;
@@ -100,8 +105,12 @@ function syncLocationFields() {
   if (isDorm) {
     buildingSelect.value = "";
     classroomDetailsInput.value = "";
+    if (!isWoodlandHill) {
+      woodlandHillBuildingSelect.value = "";
+    }
   } else if (isBuilding) {
     dormBuildingSelect.value = "";
+    woodlandHillBuildingSelect.value = "";
     roomNumberInput.value = "";
     vanWinkleCommunityInput.value = "";
   }
@@ -160,8 +169,9 @@ function getLocationSummary(data) {
   const locationType = data.locationType;
 
   if (locationType === "Dorm") {
+    const dormBuilding = data.woodlandHillBuilding || data.dormBuilding;
     const community = data.vanWinkleCommunity ? `, ${data.vanWinkleCommunity}` : "";
-    return `${data.dormBuilding} Room ${data.roomNumber}${community}`;
+    return `${dormBuilding} Room ${data.roomNumber}${community}`;
   }
 
   return `${data.building} - ${data.classroomDetails}`;
@@ -187,6 +197,7 @@ function getOrderData(formData) {
     deliveryDetails: formData.get("deliveryDetails") || "",
     locationType: formData.get("locationType"),
     dormBuilding: formData.get("dormBuilding") || "",
+    woodlandHillBuilding: formData.get("woodlandHillBuilding") || "",
     roomNumber: formData.get("roomNumber") || "",
     vanWinkleCommunity: formData.get("vanWinkleCommunity") || "",
     building: formData.get("building") || "",
