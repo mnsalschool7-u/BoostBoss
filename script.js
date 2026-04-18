@@ -31,9 +31,11 @@ const deliveryDetailsInput = document.getElementById("delivery-details");
 const deliveryDetailsNote = document.getElementById("delivery-details-note");
 const paymentMethodInputs = document.querySelectorAll('input[name="paymentMethod"]');
 const squareNote = document.getElementById("square-note");
+const squareOnlineNote = document.getElementById("square-online-note");
 const digitalPaymentNote = document.getElementById("digital-payment-note");
 const venmoLink = document.getElementById("venmo-link");
 const applePayInstructions = document.getElementById("apple-pay-instructions");
+const squareLink = document.getElementById("square-link");
 const orderScreenshotInput = document.getElementById("order-screenshot");
 const submitButton = orderForm.querySelector('button[type="submit"]');
 const feedbackForm = document.getElementById("feedback-form");
@@ -160,13 +162,15 @@ function syncDeliveryFields() {
 
 function syncPaymentFields() {
   const selectedPayment = orderForm.querySelector('input[name="paymentMethod"]:checked').value;
-  squareNote.classList.toggle("hidden", selectedPayment !== "Square");
+  squareNote.classList.toggle("hidden", selectedPayment !== "Square in person");
+  squareOnlineNote.classList.toggle("hidden", selectedPayment !== "Square online");
   digitalPaymentNote.classList.toggle(
     "hidden",
     selectedPayment !== "Venmo" && selectedPayment !== "Apple Pay"
   );
   venmoLink.classList.toggle("hidden", selectedPayment !== "Venmo");
   applePayInstructions.classList.toggle("hidden", selectedPayment !== "Apple Pay");
+  squareLink.classList.toggle("hidden", selectedPayment !== "Square online");
 }
 
 function getLocationSummary(data) {

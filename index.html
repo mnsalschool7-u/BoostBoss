@@ -306,12 +306,19 @@
                   <span>Cash</span>
                 </label>
                 <label>
-                  <input type="radio" name="paymentMethod" value="Square" />
+                  <input type="radio" name="paymentMethod" value="Square in person" />
                   <span>Square (in person swipe or tap)</span>
+                </label>
+                <label>
+                  <input type="radio" name="paymentMethod" value="Square online" />
+                  <span>Square online checkout</span>
                 </label>
               </div>
               <p class="field-note hidden" id="square-note">
                 Square means you'll swipe or tap your card in person when your order arrives.
+              </p>
+              <p class="field-note hidden" id="square-online-note">
+                Square online checkout will open a secure $3 payment link.
               </p>
               <p class="field-note hidden" id="digital-payment-note">
                 Send money to 571-619-4416 as soon as you fill out the form.
@@ -328,6 +335,15 @@
               <div class="apple-pay-instructions hidden" id="apple-pay-instructions">
                 Open Apple Pay or Messages and send $3 to 571-619-4416.
               </div>
+              <a
+                class="square-link hidden"
+                id="square-link"
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open Square checkout
+              </a>
             </section>
 
             <section class="stats-grid">
