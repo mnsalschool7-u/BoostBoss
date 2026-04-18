@@ -5,6 +5,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
+const { Pool } = require("pg");
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ const adminPassword = process.env.ADMIN_PASSWORD || "";
 const notificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || "";
 const pokeWebhookUrl = process.env.POKE_WEBHOOK_URL || "";
 const pokeApiToken = process.env.POKE_API_TOKEN || "";
+const databaseUrl = process.env.DATABASE_URL || "";
 
 const app = express();
 const publicDir = __dirname;
@@ -24,6 +26,12 @@ const ordersFile = path.join(dataDir, "orders.json");
 const feedbackFile = path.join(dataDir, "feedback.json");
 const statusFile = path.join(dataDir, "status.json");
 const uploadsDir = path.join(dataDir, "uploads");
+const dbPool = databaseUrl
+  ? new Pool({
+      connectionString: databaseUrl,
+      ssl: process.env.DATABASE_SSL === "false" ? false : { rejectUnauthorized: false },
+    })
+  : null;
 
 fs.mkdirSync(dataDir, { recursive: true });
 fs.mkdirSync(uploadsDir, { recursive: true });
@@ -130,6 +138,134 @@ function upsertOrder(nextOrder) {
   }
 
   writeOrders(orders);
+}
+
+async function initDatabase() {
+  if (!dbPool) {
+    return;
+  }
+
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS app_state (
+      key TEXT PRIMARY KEY,
+      value JSONB NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id TEXT PRIMARY KEY,
+      data JSONB NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS feedback (
+      id TEXT PRIMARY KEY,
+      data JSONB NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+}
+
+async function readOrdersStore() {
+  if (!dbPool) {
+    return readOrders();
+  }
+
+  const result = await dbPool.query(`
+    SELECT data
+    FROM orders
+    ORDER BY COALESCE((data->>'createdAt')::timestamptz, created_at) DESC;
+  `);
+  return result.rows.map((row) => row.data);
+}
+
+async function upsertOrderStore(order) {
+  if (!dbPool) {
+    upsertOrder(order);
+    return;
+  }
+
+  await dbPool.query(
+    `
+      INSERT INTO orders (id, data)
+      VALUES ($1, $2)
+      ON CONFLICT (id)
+      DO UPDATE SET data = EXCLUDED.data;
+    `,
+    [order.sessionId, order]
+  );
+}
+
+async function readFeedbackStore() {
+  if (!dbPool) {
+    return readFeedback();
+  }
+
+  const result = await dbPool.query(`
+    SELECT data
+    FROM feedback
+    ORDER BY COALESCE((data->>'createdAt')::timestamptz, created_at) DESC;
+  `);
+  return result.rows.map((row) => row.data);
+}
+
+async function upsertFeedbackStore(feedback) {
+  if (!dbPool) {
+    const feedbackItems = readFeedback();
+    feedbackItems.unshift(feedback);
+    writeFeedback(feedbackItems);
+    return;
+  }
+
+  await dbPool.query(
+    `
+      INSERT INTO feedback (id, data)
+      VALUES ($1, $2)
+      ON CONFLICT (id)
+      DO UPDATE SET data = EXCLUDED.data;
+    `,
+    [feedback.id, feedback]
+  );
+}
+
+async function readAvailabilityStatusStore() {
+  if (!dbPool) {
+    return readAvailabilityStatus();
+  }
+
+  const result = await dbPool.query("SELECT value FROM app_state WHERE key = $1;", [
+    "availability",
+  ]);
+
+  if (result.rows.length === 0) {
+    return { isOpen: false, updatedAt: null };
+  }
+
+  return {
+    isOpen: Boolean(result.rows[0].value.isOpen),
+    updatedAt: result.rows[0].value.updatedAt || null,
+  };
+}
+
+async function writeAvailabilityStatusStore(status) {
+  if (!dbPool) {
+    writeAvailabilityStatus(status);
+    return;
+  }
+
+  await dbPool.query(
+    `
+      INSERT INTO app_state (key, value, updated_at)
+      VALUES ($1, $2, NOW())
+      ON CONFLICT (key)
+      DO UPDATE SET value = EXCLUDED.value, updated_at = NOW();
+    `,
+    ["availability", status]
+  );
 }
 
 function parseCookies(req) {
@@ -261,9 +397,9 @@ app.use(express.json());
 app.use(express.static(publicDir));
 app.use("/uploads", express.static(uploadsDir));
 
-app.get("/api/status", (_req, res) => {
+app.get("/api/status", async (_req, res) => {
   try {
-    return res.json(readAvailabilityStatus());
+    return res.json(await readAvailabilityStatusStore());
   } catch (error) {
     return res.status(500).json({ error: "Unable to read live availability." });
   }
@@ -273,14 +409,14 @@ app.get("/api/admin/session", (req, res) => {
   res.json({ authenticated: isAdminAuthenticated(req) });
 });
 
-app.post("/api/admin/status", requireAdmin, (req, res) => {
+app.post("/api/admin/status", requireAdmin, async (req, res) => {
   const nextStatus = {
     isOpen: Boolean(req.body.isOpen),
     updatedAt: new Date().toISOString(),
   };
 
   try {
-    writeAvailabilityStatus(nextStatus);
+    await writeAvailabilityStatusStore(nextStatus);
     return res.json(nextStatus);
   } catch (error) {
     return res.status(500).json({ error: "Unable to update live availability." });
@@ -322,17 +458,17 @@ app.post("/api/upload-screenshot", upload.single("orderScreenshot"), (req, res) 
   });
 });
 
-app.get("/api/orders", requireAdmin, (_req, res) => {
+app.get("/api/orders", requireAdmin, async (_req, res) => {
   try {
-    return res.json(readOrders());
+    return res.json(await readOrdersStore());
   } catch (error) {
     return res.status(500).json({ error: "Unable to read saved orders." });
   }
 });
 
-app.get("/api/orders/:sessionId", requireAdmin, (req, res) => {
+app.get("/api/orders/:sessionId", requireAdmin, async (req, res) => {
   try {
-    const order = readOrders().find((entry) => entry.sessionId === req.params.sessionId);
+    const order = (await readOrdersStore()).find((entry) => entry.sessionId === req.params.sessionId);
 
     if (!order) {
       return res.status(404).json({ error: "Order not found." });
@@ -344,9 +480,9 @@ app.get("/api/orders/:sessionId", requireAdmin, (req, res) => {
   }
 });
 
-app.get("/api/feedback", requireAdmin, (_req, res) => {
+app.get("/api/feedback", requireAdmin, async (_req, res) => {
   try {
-    return res.json(readFeedback());
+    return res.json(await readFeedbackStore());
   } catch (error) {
     return res.status(500).json({ error: "Unable to read feedback." });
   }
@@ -367,9 +503,7 @@ app.post("/api/feedback", async (req, res) => {
     createdAt: new Date().toISOString(),
   };
 
-  const feedbackItems = readFeedback();
-  feedbackItems.unshift(feedback);
-  writeFeedback(feedbackItems);
+  await upsertFeedbackStore(feedback);
 
   try {
     const notificationSent = await sendFeedbackNotification(feedback);
@@ -406,7 +540,7 @@ app.post("/api/manual-order", async (req, res) => {
     loggedAt: new Date().toISOString(),
   };
 
-  upsertOrder(manualOrder);
+  await upsertOrderStore(manualOrder);
 
   let emailNotificationSent = false;
   let pokeNotificationSent = false;
@@ -436,6 +570,14 @@ if (missingEnvVars.length > 0) {
   console.warn(`Missing environment variables: ${missingEnvVars.join(", ")}`);
 }
 
-app.listen(port, () => {
-  console.log(`Boost Boss is running at http://localhost:${port}`);
-});
+initDatabase()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Boost Boss is running at http://localhost:${port}`);
+      console.log(dbPool ? "Using Postgres persistence." : "Using local file persistence.");
+    });
+  })
+  .catch((error) => {
+    console.error("Unable to initialize persistent storage:", error);
+    process.exit(1);
+  });
