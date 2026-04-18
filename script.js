@@ -123,10 +123,7 @@ function syncDeliveryFields() {
       label: "Where should we meet?",
       placeholder: "Door number, general pointers, or meetup spot",
     },
-    "In class": {
-      label: "Class number",
-      placeholder: "Enter your class number",
-    },
+    "In class": {},
   };
 
   const config = detailConfig[selectedType];
