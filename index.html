@@ -300,6 +300,29 @@
 
             <button type="submit" class="primary-button">Place order</button>
           </form>
+
+          <section class="feedback-card">
+            <p class="card-label">Suggestions</p>
+            <h2 class="feedback-title">Help us improve Boost Boss.</h2>
+            <form class="feedback-form" id="feedback-form">
+              <div class="input-shell">
+                <input id="feedback-name" name="name" type="text" placeholder="Your name, optional" />
+              </div>
+              <div class="input-shell">
+                <textarea
+                  id="feedback-message"
+                  name="message"
+                  rows="4"
+                  placeholder="Have an idea, issue, or suggestion? Tell us here."
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="secondary-button" id="feedback-submit-button">
+                Send suggestion
+              </button>
+              <p class="field-note hidden" id="feedback-message-status" role="status" aria-live="polite"></p>
+            </form>
+          </section>
         </div>
 
         <div class="screen hidden" id="confirmation-screen">

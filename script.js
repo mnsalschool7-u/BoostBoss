@@ -32,6 +32,9 @@ const squareNote = document.getElementById("square-note");
 const digitalPaymentNote = document.getElementById("digital-payment-note");
 const orderScreenshotInput = document.getElementById("order-screenshot");
 const submitButton = orderForm.querySelector('button[type="submit"]');
+const feedbackForm = document.getElementById("feedback-form");
+const feedbackSubmitButton = document.getElementById("feedback-submit-button");
+const feedbackMessageStatus = document.getElementById("feedback-message-status");
 const buttonDefaultLabels = new Map([[submitButton, submitButton.textContent]]);
 
 function setMessage(message) {
@@ -44,6 +47,11 @@ function setButtonsDisabled(disabled, activeButton) {
     button.disabled = disabled;
     button.textContent = disabled && button === activeButton ? "Submitting order..." : label;
   });
+}
+
+function setFeedbackMessage(message) {
+  feedbackMessageStatus.textContent = message;
+  feedbackMessageStatus.classList.toggle("hidden", !message);
 }
 
 function renderAvailabilityState(isOpen) {
@@ -255,6 +263,39 @@ paymentMethodInputs.forEach((input) => input.addEventListener("change", syncPaym
 orderForm.addEventListener("submit", (event) => {
   event.preventDefault();
   submitManualOrder(submitButton);
+});
+
+feedbackForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(feedbackForm);
+  feedbackSubmitButton.disabled = true;
+  feedbackSubmitButton.textContent = "Sending...";
+  setFeedbackMessage("");
+
+  try {
+    const response = await fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.get("name") || "Anonymous",
+        message: formData.get("message"),
+      }),
+    });
+    const payload = await response.json();
+
+    if (!response.ok) {
+      throw new Error(payload.error || "Unable to save suggestion.");
+    }
+
+    feedbackForm.reset();
+    setFeedbackMessage("Thanks for the suggestion. We appreciate it.");
+  } catch (error) {
+    setFeedbackMessage(error.message || "Unable to send suggestion right now.");
+  } finally {
+    feedbackSubmitButton.disabled = false;
+    feedbackSubmitButton.textContent = "Send suggestion";
+  }
 });
 
 newOrderButton.addEventListener("click", () => {

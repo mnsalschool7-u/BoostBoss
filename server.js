@@ -21,6 +21,7 @@ const dataDir = process.env.DATA_DIR
   ? path.resolve(process.env.DATA_DIR)
   : path.join(__dirname, "data");
 const ordersFile = path.join(dataDir, "orders.json");
+const feedbackFile = path.join(dataDir, "feedback.json");
 const statusFile = path.join(dataDir, "status.json");
 const uploadsDir = path.join(dataDir, "uploads");
 
@@ -77,6 +78,24 @@ function readOrders() {
 
 function writeOrders(orders) {
   fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
+}
+
+function readFeedback() {
+  try {
+    const raw = fs.readFileSync(feedbackFile, "utf8");
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
+function writeFeedback(items) {
+  fs.writeFileSync(feedbackFile, JSON.stringify(items, null, 2));
 }
 
 function readAvailabilityStatus() {
@@ -181,6 +200,27 @@ async function sendOrderNotification(order) {
       `Payment method: ${order.paymentMethod}`,
       `Screenshot: ${order.screenshotPath ? `${process.env.PUBLIC_BASE_URL || ""}${order.screenshotPath}` : "Uploaded on server"}`,
       `Order ID: ${order.sessionId}`,
+    ].join("\n"),
+  });
+
+  return true;
+}
+
+async function sendFeedbackNotification(feedback) {
+  if (!mailTransport || !notificationEmail) {
+    return false;
+  }
+
+  await mailTransport.sendMail({
+    from: process.env.SMTP_USER,
+    to: notificationEmail,
+    subject: `New Boost Boss suggestion`,
+    text: [
+      `New Boost Boss suggestion received.`,
+      ``,
+      `Name: ${feedback.name}`,
+      `Message: ${feedback.message}`,
+      `Feedback ID: ${feedback.id}`,
     ].join("\n"),
   });
 
@@ -300,6 +340,42 @@ app.get("/api/orders/:sessionId", requireAdmin, (req, res) => {
     return res.json(order);
   } catch (error) {
     return res.status(500).json({ error: "Unable to read saved order." });
+  }
+});
+
+app.get("/api/feedback", requireAdmin, (_req, res) => {
+  try {
+    return res.json(readFeedback());
+  } catch (error) {
+    return res.status(500).json({ error: "Unable to read feedback." });
+  }
+});
+
+app.post("/api/feedback", async (req, res) => {
+  const message = `${req.body.message || ""}`.trim();
+  const name = `${req.body.name || "Anonymous"}`.trim() || "Anonymous";
+
+  if (!message) {
+    return res.status(400).json({ error: "Please include a suggestion." });
+  }
+
+  const feedback = {
+    id: `feedback_${crypto.randomUUID()}`,
+    name,
+    message,
+    createdAt: new Date().toISOString(),
+  };
+
+  const feedbackItems = readFeedback();
+  feedbackItems.unshift(feedback);
+  writeFeedback(feedbackItems);
+
+  try {
+    const notificationSent = await sendFeedbackNotification(feedback);
+    return res.json({ ...feedback, notificationSent });
+  } catch (error) {
+    console.error("Feedback notification failed:", error.message);
+    return res.json({ ...feedback, notificationSent: false });
   }
 });
 

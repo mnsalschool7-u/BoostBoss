@@ -161,7 +161,8 @@ h2 {
 
 .status-card,
 .info-card,
-.confirmation-card {
+.confirmation-card,
+.feedback-card {
   background: var(--surface);
   border: 1px solid var(--border);
   backdrop-filter: blur(14px);
@@ -255,6 +256,23 @@ h2 {
   margin-top: 18px;
   display: grid;
   gap: 16px;
+}
+
+.feedback-card {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+}
+
+.feedback-title {
+  margin-top: 8px;
+  font-size: clamp(2rem, 8vw, 2.7rem);
+}
+
+.feedback-form {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
 }
 
 .field-group {
@@ -591,7 +609,8 @@ h2 {
 }
 
 .primary-button,
-.apple-button {
+.apple-button,
+.secondary-button {
   width: 100%;
   border: 0;
   padding: 17px 18px;
@@ -611,8 +630,14 @@ h2 {
   color: white;
 }
 
+.secondary-button {
+  background: rgba(8, 59, 39, 0.1);
+  color: var(--green-900);
+}
+
 .primary-button:hover,
-.apple-button:hover {
+.apple-button:hover,
+.secondary-button:hover {
   transform: translateY(-2px);
 }
 
