@@ -123,7 +123,7 @@ function syncDeliveryFields() {
       label: "Where should we meet?",
       placeholder: "Door number, general pointers, or meetup spot",
     },
-    "In class": {},
+    "In class/study room": {},
   };
 
   const config = detailConfig[selectedType];
