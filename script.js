@@ -140,7 +140,7 @@ function syncDeliveryFields() {
     "Drop off at building door": {
       label: "Which building door should we drop at?",
       placeholder: "Try to include the door number",
-      note: "Drop off at building door only applies if you send payment through Apple Pay or Venmo upon filling out the form.",
+      note: "Drop off at dorm/building door only applies upon sending payment at the same time of form submission.",
     },
     "Meet outside": {
       label: "Where should we meet?",
