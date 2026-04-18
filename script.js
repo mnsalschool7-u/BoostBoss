@@ -81,24 +81,25 @@ async function loadAvailabilityState() {
 function syncLocationFields() {
   const selectedType = orderForm.querySelector('input[name="locationType"]:checked').value;
   const isDorm = selectedType === "Dorm";
+  const isBuilding = selectedType === "Babson building";
   const isVanWinkle = isDorm && dormBuildingSelect.value === "Van Winkle Hall";
 
   dormFields.classList.toggle("hidden", !isDorm);
   dormRoomGroup.classList.toggle("hidden", !isDorm);
-  buildingFields.classList.toggle("hidden", isDorm);
-  classroomGroup.classList.toggle("hidden", isDorm);
+  buildingFields.classList.toggle("hidden", !isBuilding);
+  classroomGroup.classList.toggle("hidden", !isBuilding);
   vanWinkleGroup.classList.toggle("hidden", !isVanWinkle);
 
   dormBuildingSelect.required = isDorm;
   roomNumberInput.required = isDorm;
-  buildingSelect.required = !isDorm;
-  classroomDetailsInput.required = !isDorm;
+  buildingSelect.required = isBuilding;
+  classroomDetailsInput.required = isBuilding;
   vanWinkleCommunityInput.required = isVanWinkle;
 
   if (isDorm) {
     buildingSelect.value = "";
     classroomDetailsInput.value = "";
-  } else {
+  } else if (isBuilding) {
     dormBuildingSelect.value = "";
     roomNumberInput.value = "";
     vanWinkleCommunityInput.value = "";
