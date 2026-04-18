@@ -32,6 +32,7 @@ const deliveryDetailsNote = document.getElementById("delivery-details-note");
 const paymentMethodInputs = document.querySelectorAll('input[name="paymentMethod"]');
 const squareNote = document.getElementById("square-note");
 const digitalPaymentNote = document.getElementById("digital-payment-note");
+const venmoLink = document.getElementById("venmo-link");
 const orderScreenshotInput = document.getElementById("order-screenshot");
 const submitButton = orderForm.querySelector('button[type="submit"]');
 const feedbackForm = document.getElementById("feedback-form");
@@ -163,6 +164,7 @@ function syncPaymentFields() {
     "hidden",
     selectedPayment !== "Venmo" && selectedPayment !== "Apple Pay"
   );
+  venmoLink.classList.toggle("hidden", selectedPayment !== "Venmo");
 }
 
 function getLocationSummary(data) {
