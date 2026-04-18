@@ -82,7 +82,8 @@ function syncLocationFields() {
   const selectedType = orderForm.querySelector('input[name="locationType"]:checked').value;
   const isDorm = selectedType === "Dorm";
   const isBuilding = selectedType === "Babson building";
-  const isVanWinkle = isDorm && dormBuildingSelect.value === "Van Winkle Hall";
+  const selectedDorm = dormBuildingSelect.value || dormBuildingSelect.selectedOptions[0]?.textContent || "";
+  const isVanWinkle = isDorm && selectedDorm.toLowerCase().includes("van winkle");
 
   dormFields.classList.toggle("hidden", !isDorm);
   dormRoomGroup.classList.toggle("hidden", !isDorm);
@@ -255,6 +256,7 @@ async function submitManualOrder(activeButton) {
 
 locationTypeInputs.forEach((input) => input.addEventListener("change", syncLocationFields));
 dormBuildingSelect.addEventListener("change", syncLocationFields);
+dormBuildingSelect.addEventListener("input", syncLocationFields);
 deliveryTypeInputs.forEach((input) => input.addEventListener("change", syncDeliveryFields));
 paymentMethodInputs.forEach((input) => input.addEventListener("change", syncPaymentFields));
 
