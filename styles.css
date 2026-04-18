@@ -630,7 +630,8 @@ h2 {
   color: var(--green-900);
 }
 
-.venmo-link {
+.venmo-link,
+.apple-pay-instructions {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -643,10 +644,15 @@ h2 {
   text-decoration: none;
 }
 
+.apple-pay-instructions {
+  background: #111111;
+}
+
 .primary-button:hover,
 .apple-button:hover,
 .secondary-button:hover,
-.venmo-link:hover {
+.venmo-link:hover,
+.apple-pay-instructions:hover {
   transform: translateY(-2px);
 }
 
