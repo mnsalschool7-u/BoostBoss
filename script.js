@@ -278,7 +278,7 @@ feedbackForm.addEventListener("submit", async (event) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: formData.get("name") || "Anonymous",
+        name: "Anonymous",
         message: formData.get("message"),
       }),
     });
