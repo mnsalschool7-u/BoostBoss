@@ -632,6 +632,7 @@ h2 {
 
 .venmo-link,
 .square-link,
+.apple-pay-square-link,
 .apple-pay-instructions {
   display: inline-flex;
   justify-content: center;
@@ -649,6 +650,10 @@ h2 {
   background: #111111;
 }
 
+.apple-pay-square-link {
+  background: #111111;
+}
+
 .square-link {
   background: var(--green-700);
 }
@@ -658,6 +663,7 @@ h2 {
 .secondary-button:hover,
 .venmo-link:hover,
 .square-link:hover,
+.apple-pay-square-link:hover,
 .apple-pay-instructions:hover {
   transform: translateY(-2px);
 }

@@ -298,8 +298,12 @@
                   <span>Venmo</span>
                 </label>
                 <label>
-                  <input type="radio" name="paymentMethod" value="Apple Pay" />
-                  <span>Apple Pay</span>
+                  <input type="radio" name="paymentMethod" value="Apple Cash / Messages" />
+                  <span>Apple Cash / Messages</span>
+                </label>
+                <label>
+                  <input type="radio" name="paymentMethod" value="Apple Pay through Square" />
+                  <span>Apple Pay through Square</span>
                 </label>
                 <label>
                   <input type="radio" name="paymentMethod" value="Cash" />
@@ -333,8 +337,17 @@
                 Open Venmo to pay $3
               </a>
               <div class="apple-pay-instructions hidden" id="apple-pay-instructions">
-                Open Apple Pay or Messages and send $3 to 571-619-4416.
+                Open Messages or Wallet and send $3 to 571-619-4416.
               </div>
+              <a
+                class="apple-pay-square-link hidden"
+                id="apple-pay-square-link"
+                href="https://checkout.square.site/merchant/MLXJ9494VPRW9/location/LVP4496HGEJJ8/order/rZOnbPgGClr9tfVzNE4jiunpUaGZY"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Pay with Apple Pay through Square
+              </a>
               <a
                 class="square-link hidden"
                 id="square-link"
