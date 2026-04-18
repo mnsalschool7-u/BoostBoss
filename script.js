@@ -172,7 +172,7 @@ function syncDeliveryFields() {
 function syncPaymentFields() {
   const selectedPayment = orderForm.querySelector('input[name="paymentMethod"]:checked').value;
   squareNote.classList.toggle("hidden", selectedPayment !== "Square in person");
-  squareOnlineNote.classList.toggle("hidden", selectedPayment !== "Square online");
+  squareOnlineNote.classList.toggle("hidden", selectedPayment !== "Card-Pay online");
   digitalPaymentNote.classList.toggle(
     "hidden",
     selectedPayment !== "Venmo" && selectedPayment !== "Apple Cash / Messages"
@@ -181,7 +181,7 @@ function syncPaymentFields() {
   applePayInstructions.classList.toggle("hidden", selectedPayment !== "Apple Cash / Messages");
   messagesLink.classList.toggle("hidden", selectedPayment !== "Apple Cash / Messages");
   applePaySquareLink.classList.toggle("hidden", selectedPayment !== "Apple Pay through Square");
-  squareLink.classList.toggle("hidden", selectedPayment !== "Square online");
+  squareLink.classList.toggle("hidden", selectedPayment !== "Card-Pay online");
 }
 
 function getLocationSummary(data) {
