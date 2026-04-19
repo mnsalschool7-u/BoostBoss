@@ -159,6 +159,22 @@ h2 {
   color: rgba(255, 255, 255, 0.82);
 }
 
+.instagram-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 18px;
+  padding: 13px 16px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #f58529, #dd2a7b 48%, #8134af);
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 14px 28px rgba(129, 52, 175, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
 .status-card,
 .info-card,
 .confirmation-card,
@@ -675,7 +691,8 @@ h2 {
 .venmo-link:hover,
 .square-link:hover,
 .apple-pay-square-link:hover,
-.messages-link:hover {
+.messages-link:hover,
+.instagram-link:hover {
   transform: translateY(-2px);
 }
 
