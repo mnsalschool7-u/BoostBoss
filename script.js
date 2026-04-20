@@ -17,6 +17,7 @@ const dormFields = document.getElementById("dorm-fields");
 const dormRoomGroup = document.getElementById("dorm-room-group");
 const dormBuildingSelect = document.getElementById("dorm-building");
 const roomNumberInput = document.getElementById("room-number");
+const afterHoursGroup = document.getElementById("after-hours-group");
 const dormPaymentNote = document.getElementById("dorm-payment-note");
 const woodlandHillGroup = document.getElementById("woodland-hill-group");
 const woodlandHillBuildingSelect = document.getElementById("woodland-hill-building");
@@ -66,6 +67,12 @@ function isBoostBossSleeping() {
   const minutes = getEasternMinutesSinceMidnight();
 
   return minutes >= 30 && minutes < 7 * 60;
+}
+
+function isDormAccessAfterHours() {
+  const minutes = getEasternMinutesSinceMidnight();
+
+  return minutes >= 21 * 60 || minutes < 30;
 }
 
 function setMessage(message) {
@@ -170,6 +177,8 @@ function syncLocationFields() {
   if (!isVanWinkle) {
     vanWinkleCommunityInput.value = "";
   }
+
+  afterHoursGroup.classList.toggle("hidden", !isDormAccessAfterHours());
 }
 
 function syncDeliveryFields() {
@@ -257,6 +266,7 @@ function getOrderData(formData) {
     dormBuilding: formData.get("dormBuilding") || "",
     woodlandHillBuilding: formData.get("woodlandHillBuilding") || "",
     roomNumber: formData.get("roomNumber") || "",
+    afterHoursDetails: formData.get("afterHoursDetails") || "",
     vanWinkleCommunity: formData.get("vanWinkleCommunity") || "",
     building: formData.get("building") || "",
     classroomDetails: formData.get("classroomDetails") || "",
@@ -397,4 +407,5 @@ syncPaymentFields();
 
 setInterval(() => {
   renderAvailabilityState(manualRunnersAvailable);
+  syncLocationFields();
 }, 60 * 1000);
