@@ -194,6 +194,18 @@ h2 {
   gap: 16px;
 }
 
+.status-card.sleeping-state {
+  background:
+    radial-gradient(circle at 86% 18%, rgba(236, 214, 146, 0.34), transparent 24%),
+    linear-gradient(145deg, rgba(12, 31, 55, 0.92), rgba(8, 59, 39, 0.86));
+  color: white;
+}
+
+.status-card.sleeping-state .card-label,
+.status-card.sleeping-state .status-text {
+  color: rgba(255, 255, 255, 0.88);
+}
+
 .status-line {
   display: flex;
   align-items: center;
@@ -223,6 +235,35 @@ h2 {
   border-radius: 999px;
   background: var(--green-500);
   box-shadow: 0 0 0 6px rgba(31, 143, 95, 0.16);
+}
+
+.sleepy-scene {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.sleepy-scene.hidden {
+  display: none;
+}
+
+.moon-shape {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: inset -10px 2px 0 #122741, 0 0 22px rgba(236, 214, 146, 0.38);
+}
+
+.sleep-cloud {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  text-transform: uppercase;
 }
 
 .toggle {

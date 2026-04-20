@@ -70,6 +70,25 @@ const mailTransport = smtpConfigured
     })
   : null;
 
+function getEasternMinutesSinceMidnight() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+  const hour = Number(parts.find((part) => part.type === "hour")?.value || 0) % 24;
+  const minute = Number(parts.find((part) => part.type === "minute")?.value || 0);
+
+  return hour * 60 + minute;
+}
+
+function isBoostBossSleeping() {
+  const minutes = getEasternMinutesSinceMidnight();
+
+  return minutes >= 30 && minutes < 7 * 60;
+}
+
 function readOrders() {
   try {
     const raw = fs.readFileSync(ordersFile, "utf8");
@@ -515,6 +534,12 @@ app.post("/api/feedback", async (req, res) => {
 });
 
 app.post("/api/manual-order", async (req, res) => {
+  if (isBoostBossSleeping()) {
+    return res.status(403).json({
+      error: "Boost Boss is sleeping from 12:30am to 7am. Orders reopen at 7am.",
+    });
+  }
+
   const order = req.body;
 
   if (!order.customerName || !order.phone || !order.orderedFrom || !order.paymentMethod) {

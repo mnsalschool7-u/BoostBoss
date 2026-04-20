@@ -1,6 +1,8 @@
 const statusDot = document.getElementById("status-dot");
 const statusText = document.getElementById("status-text");
 const availabilityPill = document.getElementById("availability-pill");
+const statusCard = document.querySelector(".status-card");
+const sleepyScene = document.getElementById("sleepy-scene");
 const orderForm = document.getElementById("order-form");
 const orderScreen = document.getElementById("order-screen");
 const confirmationScreen = document.getElementById("confirmation-screen");
@@ -45,6 +47,26 @@ const feedbackSubmitButton = document.getElementById("feedback-submit-button");
 const feedbackMessageStatus = document.getElementById("feedback-message-status");
 const buttonDefaultLabels = new Map([[submitButton, submitButton.textContent]]);
 let runnersAvailable = false;
+let manualRunnersAvailable = false;
+
+function getEasternMinutesSinceMidnight() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+  const hour = Number(parts.find((part) => part.type === "hour")?.value || 0) % 24;
+  const minute = Number(parts.find((part) => part.type === "minute")?.value || 0);
+
+  return hour * 60 + minute;
+}
+
+function isBoostBossSleeping() {
+  const minutes = getEasternMinutesSinceMidnight();
+
+  return minutes >= 30 && minutes < 7 * 60;
+}
 
 function setMessage(message) {
   checkoutMessage.textContent = message;
@@ -64,18 +86,35 @@ function setFeedbackMessage(message) {
 }
 
 function renderAvailabilityState(isOpen) {
-  runnersAvailable = isOpen;
-  statusDot.style.background = isOpen ? "var(--green-500)" : "var(--red)";
-  statusDot.style.boxShadow = isOpen
+  manualRunnersAvailable = isOpen;
+
+  const isSleeping = isBoostBossSleeping();
+  const canOrder = isOpen && !isSleeping;
+  runnersAvailable = canOrder;
+
+  statusCard.classList.toggle("sleeping-state", isSleeping);
+  sleepyScene.classList.toggle("hidden", !isSleeping);
+  statusDot.style.background = canOrder ? "var(--green-500)" : "var(--red)";
+  statusDot.style.boxShadow = canOrder
     ? "0 0 0 6px rgba(31, 143, 95, 0.16)"
     : "0 0 0 6px rgba(201, 75, 75, 0.16)";
-  statusText.textContent = isOpen ? "Runners available" : "No runners available";
-  availabilityPill.textContent = isOpen ? "Live" : "Offline";
-  orderForm.classList.toggle("form-disabled", !isOpen);
+  statusText.textContent = isSleeping
+    ? "Boost Boss is sleeping"
+    : isOpen
+      ? "Runners available"
+      : "No runners available";
+  availabilityPill.textContent = isSleeping ? "Sleeping" : isOpen ? "Live" : "Offline";
+  orderForm.classList.toggle("form-disabled", !canOrder);
   orderForm.querySelectorAll("input, select, textarea, button").forEach((field) => {
-    field.disabled = !isOpen;
+    field.disabled = !canOrder;
   });
-  setMessage(isOpen ? "" : "Ordering is paused right now because no runners are available.");
+  setMessage(
+    canOrder
+      ? ""
+      : isSleeping
+        ? "Boost Boss is sleeping from 12:30am to 7am. Orders reopen at 7am."
+        : "Ordering is paused right now because no runners are available."
+  );
 }
 
 async function loadAvailabilityState() {
@@ -252,6 +291,11 @@ async function uploadScreenshot() {
 }
 
 async function submitManualOrder(activeButton) {
+  if (isBoostBossSleeping()) {
+    renderAvailabilityState(manualRunnersAvailable);
+    return;
+  }
+
   if (!runnersAvailable) {
     setMessage("Ordering is paused right now because no runners are available.");
     return;
@@ -350,3 +394,7 @@ loadAvailabilityState();
 syncLocationFields();
 syncDeliveryFields();
 syncPaymentFields();
+
+setInterval(() => {
+  renderAvailabilityState(manualRunnersAvailable);
+}, 60 * 1000);
