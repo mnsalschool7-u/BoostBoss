@@ -343,6 +343,38 @@ h2 {
   gap: 12px;
 }
 
+.faq-card {
+  margin-top: 18px;
+}
+
+.faq-item {
+  margin-top: 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.faq-item summary {
+  padding: 15px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-item .field-note {
+  margin: 0;
+  padding: 14px 16px 16px;
+}
+
 .field-group {
   display: grid;
   gap: 10px;
