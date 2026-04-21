@@ -34,6 +34,7 @@ const deliveryDetailsLabel = document.getElementById("delivery-details-label");
 const deliveryDetailsInput = document.getElementById("delivery-details");
 const deliveryDetailsNote = document.getElementById("delivery-details-note");
 const paymentMethodInputs = document.querySelectorAll('input[name="paymentMethod"]');
+const paymentSection = document.getElementById("payment-section");
 const promoCodeInput = document.getElementById("promo-code");
 const promoStatus = document.getElementById("promo-status");
 const squareNote = document.getElementById("square-note");
@@ -118,6 +119,7 @@ function syncPromoState() {
       ? "Promo code not recognized."
       : "";
   promoStatus.classList.toggle("hidden", !promoStatus.textContent);
+  paymentSection.classList.toggle("hidden", promoApplied);
 }
 
 function renderAvailabilityState(isOpen) {
