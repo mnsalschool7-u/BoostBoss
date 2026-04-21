@@ -337,6 +337,14 @@
             </section>
 
             <section class="field-group">
+              <label class="field-label" for="promo-code">Promo code</label>
+              <div class="input-shell">
+                <input id="promo-code" name="promoCode" type="text" placeholder="Enter promo code" />
+              </div>
+              <p class="field-note hidden" id="promo-status" role="status" aria-live="polite"></p>
+            </section>
+
+            <section class="field-group">
               <label class="field-label">Payment method</label>
               <div class="payment-grid">
                 <label>
@@ -369,6 +377,9 @@
               </p>
               <p class="field-note hidden" id="square-online-note">
                 Card-Pay online will open a secure $3 payment link.
+              </p>
+              <p class="field-note hidden" id="promo-payment-note">
+                Promo code applied. Your delivery fee is $0, so no payment is needed.
               </p>
               <p class="field-note hidden" id="digital-payment-note">
                 Send money to 571-619-4416 as soon as you fill out the form.
@@ -412,10 +423,10 @@
               <article class="info-card fee-card">
                 <div class="info-header">
                   <p class="card-label">Delivery fee</p>
-                  <span class="price-tag">$3 flat rate</span>
+                  <span class="price-tag" id="delivery-fee-price">$3 flat rate</span>
                 </div>
                 <div class="fee-bar">
-                  <span></span>
+                  <span id="delivery-fee-fill"></span>
                 </div>
               </article>
             </section>
@@ -471,7 +482,7 @@
                 <p id="confirmation-payment">Venmo</p>
               </article>
               <article>
-                <p class="card-label">Send to</p>
+                <p class="card-label" id="confirmation-send-to-label">Send to</p>
                 <p id="confirmation-send-to">571-619-4416</p>
               </article>
             </div>

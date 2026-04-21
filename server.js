@@ -69,6 +69,7 @@ const mailTransport = smtpConfigured
       },
     })
   : null;
+const FREE_DELIVERY_CODE = "CODE";
 
 function getEasternMinutesSinceMidnight() {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -87,6 +88,10 @@ function isBoostBossSleeping() {
   const minutes = getEasternMinutesSinceMidnight();
 
   return minutes >= 30 && minutes < 7 * 60;
+}
+
+function hasFreeDeliveryPromo(code = "") {
+  return `${code}`.trim().toUpperCase() === FREE_DELIVERY_CODE;
 }
 
 function readOrders() {
@@ -353,6 +358,8 @@ async function sendOrderNotification(order) {
       `Pickup location: ${order.orderedFrom}`,
       `Delivery location: ${order.locationSummary}`,
       `After-hours dropoff/meet details: ${order.afterHoursDetails || "N/A"}`,
+      `Promo code: ${order.promoCode || "N/A"}`,
+      `Delivery fee: $${((order.amountTotal || 0) / 100).toFixed(2)}`,
       `Delivery type: ${deliveryLine}`,
       `Payment method: ${order.paymentMethod}`,
       `Screenshot: ${order.screenshotPath ? `${process.env.PUBLIC_BASE_URL || ""}${order.screenshotPath}` : "Uploaded on server"}`,
@@ -542,6 +549,7 @@ app.post("/api/manual-order", async (req, res) => {
   }
 
   const order = req.body;
+  const promoApplied = hasFreeDeliveryPromo(order.promoCode);
 
   if (!order.customerName || !order.phone || !order.orderedFrom || !order.paymentMethod) {
     return res.status(400).json({ error: "Missing required order details." });
@@ -550,11 +558,13 @@ app.post("/api/manual-order", async (req, res) => {
   const manualOrder = {
     sessionId: `manual_${crypto.randomUUID()}`,
     paymentStatus: "manual-submitted",
-    amountTotal: 300,
+    amountTotal: promoApplied ? 0 : 300,
     currency: "usd",
     customerName: order.customerName,
     phone: order.phone,
     orderedFrom: order.orderedFrom,
+    promoCode: promoApplied ? `${order.promoCode}`.trim() : "",
+    promoApplied,
     paymentMethod: order.paymentMethod,
     deliveryType: order.deliveryType,
     deliveryDetails: order.deliveryDetails || "",

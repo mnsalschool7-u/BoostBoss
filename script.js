@@ -9,6 +9,7 @@ const confirmationScreen = document.getElementById("confirmation-screen");
 const confirmationLocation = document.getElementById("confirmation-location");
 const confirmationType = document.getElementById("confirmation-type");
 const confirmationPayment = document.getElementById("confirmation-payment");
+const confirmationSendToLabel = document.getElementById("confirmation-send-to-label");
 const confirmationSendTo = document.getElementById("confirmation-send-to");
 const newOrderButton = document.getElementById("new-order-button");
 const checkoutMessage = document.getElementById("checkout-message");
@@ -33,14 +34,19 @@ const deliveryDetailsLabel = document.getElementById("delivery-details-label");
 const deliveryDetailsInput = document.getElementById("delivery-details");
 const deliveryDetailsNote = document.getElementById("delivery-details-note");
 const paymentMethodInputs = document.querySelectorAll('input[name="paymentMethod"]');
+const promoCodeInput = document.getElementById("promo-code");
+const promoStatus = document.getElementById("promo-status");
 const squareNote = document.getElementById("square-note");
 const squareOnlineNote = document.getElementById("square-online-note");
+const promoPaymentNote = document.getElementById("promo-payment-note");
 const digitalPaymentNote = document.getElementById("digital-payment-note");
 const venmoLink = document.getElementById("venmo-link");
 const applePayInstructions = document.getElementById("apple-pay-instructions");
 const messagesLink = document.getElementById("messages-link");
 const applePaySquareLink = document.getElementById("apple-pay-square-link");
 const squareLink = document.getElementById("square-link");
+const deliveryFeePrice = document.getElementById("delivery-fee-price");
+const deliveryFeeFill = document.getElementById("delivery-fee-fill");
 const orderScreenshotInput = document.getElementById("order-screenshot");
 const submitButton = orderForm.querySelector('button[type="submit"]');
 const feedbackForm = document.getElementById("feedback-form");
@@ -49,6 +55,7 @@ const feedbackMessageStatus = document.getElementById("feedback-message-status")
 const buttonDefaultLabels = new Map([[submitButton, submitButton.textContent]]);
 let runnersAvailable = false;
 let manualRunnersAvailable = false;
+const FREE_DELIVERY_CODE = "CODE";
 
 function getEasternMinutesSinceMidnight() {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -90,6 +97,27 @@ function setButtonsDisabled(disabled, activeButton) {
 function setFeedbackMessage(message) {
   feedbackMessageStatus.textContent = message;
   feedbackMessageStatus.classList.toggle("hidden", !message);
+}
+
+function hasFreeDeliveryPromo(code = promoCodeInput?.value || "") {
+  return code.trim().toUpperCase() === FREE_DELIVERY_CODE;
+}
+
+function syncPromoState() {
+  const promoApplied = hasFreeDeliveryPromo();
+
+  deliveryFeePrice.textContent = promoApplied ? "$0 flat rate" : "$3 flat rate";
+  deliveryFeeFill.style.width = promoApplied ? "0%" : "100%";
+  deliveryFeeFill.style.background = promoApplied
+    ? "linear-gradient(90deg, var(--green-300), var(--green-100))"
+    : "";
+
+  promoStatus.textContent = promoApplied
+    ? "Promo applied. Delivery fee is now $0."
+    : promoCodeInput.value.trim()
+      ? "Promo code not recognized."
+      : "";
+  promoStatus.classList.toggle("hidden", !promoStatus.textContent);
 }
 
 function renderAvailabilityState(isOpen) {
@@ -219,17 +247,25 @@ function syncDeliveryFields() {
 
 function syncPaymentFields() {
   const selectedPayment = orderForm.querySelector('input[name="paymentMethod"]:checked').value;
+  const promoApplied = hasFreeDeliveryPromo();
   squareNote.classList.toggle("hidden", selectedPayment !== "Square in person");
-  squareOnlineNote.classList.toggle("hidden", selectedPayment !== "Card-Pay online");
+  squareOnlineNote.classList.toggle("hidden", selectedPayment !== "Card-Pay online" || promoApplied);
+  promoPaymentNote.classList.toggle("hidden", !promoApplied);
   digitalPaymentNote.classList.toggle(
     "hidden",
-    selectedPayment !== "Venmo" && selectedPayment !== "Apple Cash / Messages"
+    promoApplied || (selectedPayment !== "Venmo" && selectedPayment !== "Apple Cash / Messages")
   );
-  venmoLink.classList.toggle("hidden", selectedPayment !== "Venmo");
-  applePayInstructions.classList.toggle("hidden", selectedPayment !== "Apple Cash / Messages");
-  messagesLink.classList.toggle("hidden", selectedPayment !== "Apple Cash / Messages");
-  applePaySquareLink.classList.toggle("hidden", selectedPayment !== "Apple Pay through Square");
-  squareLink.classList.toggle("hidden", selectedPayment !== "Card-Pay online");
+  venmoLink.classList.toggle("hidden", promoApplied || selectedPayment !== "Venmo");
+  applePayInstructions.classList.toggle(
+    "hidden",
+    promoApplied || selectedPayment !== "Apple Cash / Messages"
+  );
+  messagesLink.classList.toggle("hidden", promoApplied || selectedPayment !== "Apple Cash / Messages");
+  applePaySquareLink.classList.toggle(
+    "hidden",
+    promoApplied || selectedPayment !== "Apple Pay through Square"
+  );
+  squareLink.classList.toggle("hidden", promoApplied || selectedPayment !== "Card-Pay online");
 }
 
 function getLocationSummary(data) {
@@ -250,7 +286,8 @@ function showConfirmation(data) {
   const deliveryType = data.deliveryType;
   confirmationType.textContent = deliveryDetails ? `${deliveryType} - ${deliveryDetails}` : deliveryType;
   confirmationPayment.textContent = data.paymentMethod;
-  confirmationSendTo.textContent = "571-619-4416";
+  confirmationSendToLabel.textContent = data.amountTotal === 0 ? "Delivery fee" : "Send to";
+  confirmationSendTo.textContent = data.amountTotal === 0 ? "Promo applied - $0 due" : "571-619-4416";
 
   orderScreen.classList.add("hidden");
   confirmationScreen.classList.remove("hidden");
@@ -272,6 +309,7 @@ function getOrderData(formData) {
     classroomDetails: formData.get("classroomDetails") || "",
     orderedFrom: formData.get("orderedFrom"),
     phone: formData.get("phone"),
+    promoCode: formData.get("promoCode") || "",
     paymentMethod: formData.get("paymentMethod"),
     screenshotPath: "",
   };
@@ -348,6 +386,10 @@ dormBuildingSelect.addEventListener("change", syncLocationFields);
 dormBuildingSelect.addEventListener("input", syncLocationFields);
 deliveryTypeInputs.forEach((input) => input.addEventListener("change", syncDeliveryFields));
 paymentMethodInputs.forEach((input) => input.addEventListener("change", syncPaymentFields));
+promoCodeInput.addEventListener("input", () => {
+  syncPromoState();
+  syncPaymentFields();
+});
 
 orderForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -394,6 +436,7 @@ newOrderButton.addEventListener("click", () => {
   loadAvailabilityState();
   syncLocationFields();
   syncDeliveryFields();
+  syncPromoState();
   syncPaymentFields();
   setButtonsDisabled(false);
   setMessage("");
@@ -403,6 +446,7 @@ newOrderButton.addEventListener("click", () => {
 loadAvailabilityState();
 syncLocationFields();
 syncDeliveryFields();
+syncPromoState();
 syncPaymentFields();
 
 setInterval(() => {
