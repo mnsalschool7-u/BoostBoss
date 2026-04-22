@@ -349,30 +349,20 @@ h2 {
 
 .faq-item {
   margin-top: 16px;
+  padding: 15px 16px 16px;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid var(--border);
-  overflow: hidden;
 }
 
-.faq-item summary {
-  padding: 15px 16px;
-  cursor: pointer;
+.faq-question {
+  margin: 0;
   font-weight: 700;
-  list-style: none;
-}
-
-.faq-item summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq-item[open] summary {
-  border-bottom: 1px solid var(--border);
 }
 
 .faq-item .field-note {
-  margin: 0;
-  padding: 14px 16px 16px;
+  margin: 10px 0 0;
+  padding: 0;
 }
 
 .field-group {
