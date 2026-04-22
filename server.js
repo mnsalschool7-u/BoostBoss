@@ -393,6 +393,7 @@ async function sendFeedbackNotification(feedback) {
 
 async function sendPokeNotification(order) {
   if (!pokeWebhookUrl || !pokeApiToken) {
+    console.warn("Poke notification skipped: missing POKE_WEBHOOK_URL or POKE_API_TOKEN.");
     return false;
   }
 
@@ -414,7 +415,16 @@ async function sendPokeNotification(order) {
   });
 
   if (!response.ok) {
-    throw new Error(`Poke notification failed with status ${response.status}`);
+    let responseBody = "";
+
+    try {
+      responseBody = (await response.text()).trim();
+    } catch (_error) {
+      responseBody = "";
+    }
+
+    const responseSummary = responseBody ? `: ${responseBody.slice(0, 280)}` : "";
+    throw new Error(`Poke notification failed with status ${response.status}${responseSummary}`);
   }
 
   return true;
