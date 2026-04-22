@@ -427,11 +427,18 @@ async function sendTwilioNotification(order) {
     `Order ID: ${order.sessionId}`,
   ];
 
-  await twilioClient.messages.create({
-    body: messageLines.join("\n"),
-    from: twilioFromNumber,
-    to: twilioToNumber,
-  });
+  try {
+    await twilioClient.messages.create({
+      body: messageLines.join("\n"),
+      from: twilioFromNumber,
+      to: twilioToNumber,
+    });
+  } catch (error) {
+    const twilioCode = error?.code ? ` code ${error.code}` : "";
+    const twilioMessage = error?.message ? `: ${error.message}` : "";
+    const moreInfo = error?.moreInfo ? ` (${error.moreInfo})` : "";
+    throw new Error(`Twilio notification failed${twilioCode}${twilioMessage}${moreInfo}`);
+  }
 
   return true;
 }
