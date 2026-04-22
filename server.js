@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
+const twilio = require("twilio");
 
 dotenv.config();
 
@@ -16,6 +17,10 @@ const notificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || "";
 const pokeWebhookUrl = process.env.POKE_WEBHOOK_URL || "";
 const pokeApiToken = process.env.POKE_API_TOKEN || "";
 const databaseUrl = process.env.DATABASE_URL || "";
+const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || "";
+const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "";
+const twilioFromNumber = process.env.TWILIO_FROM_NUMBER || "";
+const twilioToNumber = process.env.TWILIO_TO_NUMBER || "";
 
 const app = express();
 const publicDir = __dirname;
@@ -69,6 +74,8 @@ const mailTransport = smtpConfigured
       },
     })
   : null;
+const twilioClient =
+  twilioAccountSid && twilioAuthToken ? twilio(twilioAccountSid, twilioAuthToken) : null;
 const FREE_DELIVERY_CODE = "CODE";
 
 function getEasternMinutesSinceMidnight() {
@@ -391,6 +398,44 @@ async function sendFeedbackNotification(feedback) {
   return true;
 }
 
+async function sendTwilioNotification(order) {
+  if (!twilioClient || !twilioFromNumber || !twilioToNumber) {
+    console.warn(
+      "Twilio notification skipped: missing TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER, or TWILIO_TO_NUMBER."
+    );
+    return false;
+  }
+
+  const deliveryLine = order.deliveryDetails
+    ? `${order.deliveryType} - ${order.deliveryDetails}`
+    : order.deliveryType;
+  const amountDue = `$${((order.amountTotal || 0) / 100).toFixed(2)}`;
+  const promoLine = order.promoApplied ? `Promo ${order.promoCode} applied.` : "No promo.";
+  const screenshotLine = order.screenshotPath ? "Screenshot uploaded." : "No screenshot uploaded.";
+
+  const messageLines = [
+    "Boost Boss order",
+    `Name: ${order.customerName}`,
+    `Phone: ${order.phone}`,
+    `Pickup: ${order.orderedFrom}`,
+    `Dropoff: ${order.locationSummary}`,
+    `Type: ${deliveryLine}`,
+    `Payment: ${order.paymentMethod}`,
+    `Fee due: ${amountDue}`,
+    promoLine,
+    screenshotLine,
+    `Order ID: ${order.sessionId}`,
+  ];
+
+  await twilioClient.messages.create({
+    body: messageLines.join("\n"),
+    from: twilioFromNumber,
+    to: twilioToNumber,
+  });
+
+  return true;
+}
+
 async function sendPokeNotification(order) {
   if (!pokeWebhookUrl || !pokeApiToken) {
     console.warn("Poke notification skipped: missing POKE_WEBHOOK_URL or POKE_API_TOKEN.");
@@ -590,6 +635,7 @@ app.post("/api/manual-order", async (req, res) => {
   await upsertOrderStore(manualOrder);
 
   let emailNotificationSent = false;
+  let twilioNotificationSent = false;
   let pokeNotificationSent = false;
 
   try {
@@ -599,12 +645,18 @@ app.post("/api/manual-order", async (req, res) => {
   }
 
   try {
+    twilioNotificationSent = await sendTwilioNotification(manualOrder);
+  } catch (error) {
+    console.error("Twilio notification failed:", error.message);
+  }
+
+  try {
     pokeNotificationSent = await sendPokeNotification(manualOrder);
   } catch (error) {
     console.error("Poke notification failed:", error.message);
   }
 
-  return res.json({ ...manualOrder, emailNotificationSent, pokeNotificationSent });
+  return res.json({ ...manualOrder, emailNotificationSent, twilioNotificationSent, pokeNotificationSent });
 });
 
 app.get("*", (_req, res) => {
