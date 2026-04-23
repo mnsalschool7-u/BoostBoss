@@ -101,6 +101,15 @@ function hasFreeDeliveryPromo(code = "") {
   return `${code}`.trim().toUpperCase() === FREE_DELIVERY_CODE;
 }
 
+function escapeXml(value = "") {
+  return `${value}`
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 function readOrders() {
   try {
     const raw = fs.readFileSync(ordersFile, "utf8");
@@ -411,33 +420,29 @@ async function sendTwilioNotification(order) {
     : order.deliveryType;
   const amountDue = `$${((order.amountTotal || 0) / 100).toFixed(2)}`;
   const promoLine = order.promoApplied ? `Promo ${order.promoCode} applied.` : "No promo.";
-  const screenshotLine = order.screenshotPath ? "Screenshot uploaded." : "No screenshot uploaded.";
-
-  const messageLines = [
-    "Boost Boss order",
-    `Name: ${order.customerName}`,
-    `Phone: ${order.phone}`,
-    `Pickup: ${order.orderedFrom}`,
-    `Dropoff: ${order.locationSummary}`,
-    `Type: ${deliveryLine}`,
-    `Payment: ${order.paymentMethod}`,
-    `Fee due: ${amountDue}`,
-    promoLine,
-    screenshotLine,
-    `Order ID: ${order.sessionId}`,
-  ];
+  const voiceMessage = [
+    "New Boost Boss order received.",
+    `Pickup location: ${order.orderedFrom}.`,
+    `Delivery location: ${order.locationSummary}.`,
+    `Delivery type: ${deliveryLine}.`,
+    `Payment method: ${order.paymentMethod}.`,
+    `Delivery fee due: ${amountDue}.`,
+    `${promoLine}.`,
+    "Check your dashboard now.",
+  ].join(" ");
+  const escapedVoiceMessage = escapeXml(voiceMessage);
 
   try {
-    await twilioClient.messages.create({
-      body: messageLines.join("\n"),
+    await twilioClient.calls.create({
       from: twilioFromNumber,
       to: twilioToNumber,
+      twiml: `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">New Boost Boss order received.</Say><Pause length="1"/><Say voice="alice">${escapedVoiceMessage}</Say></Response>`,
     });
   } catch (error) {
     const twilioCode = error?.code ? ` code ${error.code}` : "";
     const twilioMessage = error?.message ? `: ${error.message}` : "";
     const moreInfo = error?.moreInfo ? ` (${error.moreInfo})` : "";
-    throw new Error(`Twilio notification failed${twilioCode}${twilioMessage}${moreInfo}`);
+    throw new Error(`Twilio call notification failed${twilioCode}${twilioMessage}${moreInfo}`);
   }
 
   return true;
@@ -654,7 +659,7 @@ app.post("/api/manual-order", async (req, res) => {
   try {
     twilioNotificationSent = await sendTwilioNotification(manualOrder);
   } catch (error) {
-    console.error("Twilio notification failed:", error.message);
+    console.error("Twilio call notification failed:", error.message);
   }
 
   try {
