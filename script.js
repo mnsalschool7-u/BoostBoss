@@ -40,7 +40,6 @@ const promoStatus = document.getElementById("promo-status");
 const squareNote = document.getElementById("square-note");
 const squareOnlineNote = document.getElementById("square-online-note");
 const promoPaymentNote = document.getElementById("promo-payment-note");
-const digitalPaymentNote = document.getElementById("digital-payment-note");
 const venmoLink = document.getElementById("venmo-link");
 const applePayInstructions = document.getElementById("apple-pay-instructions");
 const messagesLink = document.getElementById("messages-link");
@@ -253,10 +252,6 @@ function syncPaymentFields() {
   squareNote.classList.toggle("hidden", selectedPayment !== "Square in person");
   squareOnlineNote.classList.toggle("hidden", selectedPayment !== "Card-Pay online" || promoApplied);
   promoPaymentNote.classList.toggle("hidden", !promoApplied);
-  digitalPaymentNote.classList.toggle(
-    "hidden",
-    promoApplied || (selectedPayment !== "Venmo" && selectedPayment !== "Apple Cash / Messages")
-  );
   venmoLink.classList.toggle("hidden", promoApplied || selectedPayment !== "Venmo");
   applePayInstructions.classList.toggle(
     "hidden",
