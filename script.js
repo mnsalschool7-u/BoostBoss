@@ -135,7 +135,7 @@ function renderAvailabilityState(isOpen) {
     ? "0 0 0 6px rgba(31, 143, 95, 0.16)"
     : "0 0 0 6px rgba(201, 75, 75, 0.16)";
   statusText.textContent = isSleeping
-    ? "Boost Boss is sleeping"
+    ? "Conduit is sleeping"
     : isOpen
       ? "Runners available"
       : "No runners available";
@@ -148,7 +148,7 @@ function renderAvailabilityState(isOpen) {
     canOrder
       ? ""
       : isSleeping
-        ? "Boost Boss is sleeping from 12:30am to 7am. Orders reopen at 7am."
+        ? "Conduit is sleeping from 12:30am to 7am. Orders reopen at 7am."
         : "Ordering is paused right now because no runners are available."
   );
 }

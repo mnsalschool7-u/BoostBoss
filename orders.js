@@ -20,8 +20,8 @@ function setAuthenticatedView(authenticated) {
 
 function renderAvailabilityButton() {
   availabilityToggleButton.textContent = currentAvailabilityOpen
-    ? "Set Boost Boss closed"
-    : "Set Boost Boss open";
+    ? "Set Conduit closed"
+    : "Set Conduit open";
 }
 
 function formatCurrency(amountTotal, currency) {
@@ -254,7 +254,7 @@ availabilityToggleButton.addEventListener("click", async () => {
 
     currentAvailabilityOpen = Boolean(payload.isOpen);
     renderAvailabilityButton();
-    setStatus(`Boost Boss is now ${currentAvailabilityOpen ? "open" : "closed"}.`);
+    setStatus(`Conduit is now ${currentAvailabilityOpen ? "open" : "closed"}.`);
   } catch (error) {
     setStatus(error.message || "Unable to update live availability.");
   } finally {

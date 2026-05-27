@@ -365,9 +365,9 @@ async function sendOrderNotification(order) {
   await mailTransport.sendMail({
     from: process.env.SMTP_USER,
     to: notificationEmail,
-    subject: `New Boost Boss order from ${order.customerName}`,
+    subject: `New Conduit order from ${order.customerName}`,
     text: [
-      `New Boost Boss order received.`,
+      `New Conduit order received.`,
       ``,
       `Name: ${order.customerName}`,
       `Phone: ${order.phone}`,
@@ -394,9 +394,9 @@ async function sendFeedbackNotification(feedback) {
   await mailTransport.sendMail({
     from: process.env.SMTP_USER,
     to: notificationEmail,
-    subject: `New Boost Boss suggestion`,
+    subject: `New Conduit suggestion`,
     text: [
-      `New Boost Boss suggestion received.`,
+      `New Conduit suggestion received.`,
       ``,
       `Name: ${feedback.name}`,
       `Message: ${feedback.message}`,
@@ -421,7 +421,7 @@ async function sendTwilioNotification(order) {
   const amountDue = `$${((order.amountTotal || 0) / 100).toFixed(2)}`;
   const promoLine = order.promoApplied ? `Promo ${order.promoCode} applied.` : "No promo.";
   const voiceMessage = [
-    "New Boost Boss order received.",
+    "New Conduit order received.",
     `Pickup location: ${order.orderedFrom}.`,
     `Delivery location: ${order.locationSummary}.`,
     `Delivery type: ${deliveryLine}.`,
@@ -436,7 +436,7 @@ async function sendTwilioNotification(order) {
     await twilioClient.calls.create({
       from: twilioFromNumber,
       to: twilioToNumber,
-      twiml: `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">New Boost Boss order received.</Say><Pause length="1"/><Say voice="alice">${escapedVoiceMessage}</Say></Response>`,
+      twiml: `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">New Conduit order received.</Say><Pause length="1"/><Say voice="alice">${escapedVoiceMessage}</Say></Response>`,
     });
   } catch (error) {
     const twilioCode = error?.code ? ` code ${error.code}` : "";
@@ -611,7 +611,7 @@ app.post("/api/feedback", async (req, res) => {
 app.post("/api/manual-order", async (req, res) => {
   if (isBoostBossSleeping()) {
     return res.status(403).json({
-      error: "Boost Boss is sleeping from 12:30am to 7am. Orders reopen at 7am.",
+      error: "Conduit is sleeping from 12:30am to 7am. Orders reopen at 7am.",
     });
   }
 
@@ -684,7 +684,7 @@ if (missingEnvVars.length > 0) {
 initDatabase()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Boost Boss is running at http://localhost:${port}`);
+      console.log(`Conduit is running at http://localhost:${port}`);
       console.log(dbPool ? "Using Postgres persistence." : "Using local file persistence.");
     });
   })
