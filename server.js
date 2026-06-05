@@ -16,10 +16,6 @@ const notificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || "";
 const pokeWebhookUrl = process.env.POKE_WEBHOOK_URL || "";
 const pokeApiToken = process.env.POKE_API_TOKEN || "";
 const databaseUrl = process.env.DATABASE_URL || "";
-const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || "";
-const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || "";
-const twilioFromNumber = process.env.TWILIO_FROM_NUMBER || "";
-const twilioToNumber = process.env.TWILIO_TO_NUMBER || "";
 
 const app = express();
 const publicDir = __dirname;
@@ -404,72 +400,6 @@ async function sendFeedbackNotification(feedback) {
   return true;
 }
 
-async function sendTwilioNotification(order) {
-  if (!twilioAccountSid || !twilioAuthToken || !twilioFromNumber || !twilioToNumber) {
-    console.warn(
-      "Twilio notification skipped: missing TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER, or TWILIO_TO_NUMBER."
-    );
-    return false;
-  }
-
-  const deliveryLine = order.deliveryDetails
-    ? `${order.deliveryType} - ${order.deliveryDetails}`
-    : order.deliveryType;
-  const amountDue = `$${((order.amountTotal || 0) / 100).toFixed(2)}`;
-  const promoLine = order.promoApplied ? `Promo ${order.promoCode} applied.` : "No promo.";
-  const voiceMessage = [
-    "New Grabbit order received.",
-    `Pickup location: ${order.orderedFrom}.`,
-    `Delivery location: ${order.locationSummary}.`,
-    `Delivery type: ${deliveryLine}.`,
-    `Payment method: ${order.paymentMethod}.`,
-    `Delivery fee due: ${amountDue}.`,
-    `${promoLine}.`,
-    "Check your dashboard now.",
-  ].join(" ");
-  const escapedVoiceMessage = escapeXml(voiceMessage);
-  const twiml = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">New Grabbit order received.</Say><Pause length="1"/><Say voice="alice">${escapedVoiceMessage}</Say></Response>`;
-  const credentials = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString("base64");
-  const body = new URLSearchParams({
-    From: twilioFromNumber,
-    To: twilioToNumber,
-    Twiml: twiml,
-  });
-
-  try {
-    const response = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Calls.json`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${credentials}`,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body,
-      }
-    );
-
-    if (!response.ok) {
-      let responseBody = "";
-
-      try {
-        responseBody = (await response.text()).trim();
-      } catch (_error) {
-        responseBody = "";
-      }
-
-      throw new Error(`HTTP ${response.status}${responseBody ? `: ${responseBody.slice(0, 280)}` : ""}`);
-    }
-  } catch (error) {
-    const twilioCode = error?.code ? ` code ${error.code}` : "";
-    const twilioMessage = error?.message ? `: ${error.message}` : "";
-    const moreInfo = error?.moreInfo ? ` (${error.moreInfo})` : "";
-    throw new Error(`Twilio call notification failed${twilioCode}${twilioMessage}${moreInfo}`);
-  }
-
-  return true;
-}
-
 async function sendPokeNotification(order) {
   if (!pokeWebhookUrl || !pokeApiToken) {
     console.warn("Poke notification skipped: missing POKE_WEBHOOK_URL or POKE_API_TOKEN.");
@@ -669,7 +599,6 @@ app.post("/api/manual-order", async (req, res) => {
   await upsertOrderStore(manualOrder);
 
   let emailNotificationSent = false;
-  let twilioNotificationSent = false;
   let pokeNotificationSent = false;
 
   try {
@@ -679,18 +608,12 @@ app.post("/api/manual-order", async (req, res) => {
   }
 
   try {
-    twilioNotificationSent = await sendTwilioNotification(manualOrder);
-  } catch (error) {
-    console.error("Twilio call notification failed:", error.message);
-  }
-
-  try {
     pokeNotificationSent = await sendPokeNotification(manualOrder);
   } catch (error) {
     console.error("Poke notification failed:", error.message);
   }
 
-  return res.json({ ...manualOrder, emailNotificationSent, twilioNotificationSent, pokeNotificationSent });
+  return res.json({ ...manualOrder, emailNotificationSent, pokeNotificationSent });
 });
 
 app.get("*", (_req, res) => {
