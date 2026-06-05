@@ -6,7 +6,6 @@ const dotenv = require("dotenv");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
-const twilio = require("twilio");
 
 dotenv.config();
 
@@ -74,8 +73,6 @@ const mailTransport = smtpConfigured
       },
     })
   : null;
-const twilioClient =
-  twilioAccountSid && twilioAuthToken ? twilio(twilioAccountSid, twilioAuthToken) : null;
 const FREE_DELIVERY_CODE = "CODE";
 
 function getEasternMinutesSinceMidnight() {
@@ -408,7 +405,7 @@ async function sendFeedbackNotification(feedback) {
 }
 
 async function sendTwilioNotification(order) {
-  if (!twilioClient || !twilioFromNumber || !twilioToNumber) {
+  if (!twilioAccountSid || !twilioAuthToken || !twilioFromNumber || !twilioToNumber) {
     console.warn(
       "Twilio notification skipped: missing TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER, or TWILIO_TO_NUMBER."
     );
@@ -431,13 +428,38 @@ async function sendTwilioNotification(order) {
     "Check your dashboard now.",
   ].join(" ");
   const escapedVoiceMessage = escapeXml(voiceMessage);
+  const twiml = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">New Grabbit order received.</Say><Pause length="1"/><Say voice="alice">${escapedVoiceMessage}</Say></Response>`;
+  const credentials = Buffer.from(`${twilioAccountSid}:${twilioAuthToken}`).toString("base64");
+  const body = new URLSearchParams({
+    From: twilioFromNumber,
+    To: twilioToNumber,
+    Twiml: twiml,
+  });
 
   try {
-    await twilioClient.calls.create({
-      from: twilioFromNumber,
-      to: twilioToNumber,
-      twiml: `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">New Grabbit order received.</Say><Pause length="1"/><Say voice="alice">${escapedVoiceMessage}</Say></Response>`,
-    });
+    const response = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Calls.json`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${credentials}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body,
+      }
+    );
+
+    if (!response.ok) {
+      let responseBody = "";
+
+      try {
+        responseBody = (await response.text()).trim();
+      } catch (_error) {
+        responseBody = "";
+      }
+
+      throw new Error(`HTTP ${response.status}${responseBody ? `: ${responseBody.slice(0, 280)}` : ""}`);
+    }
   } catch (error) {
     const twilioCode = error?.code ? ` code ${error.code}` : "";
     const twilioMessage = error?.message ? `: ${error.message}` : "";
