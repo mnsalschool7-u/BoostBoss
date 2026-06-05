@@ -20,8 +20,8 @@ function setAuthenticatedView(authenticated) {
 
 function renderAvailabilityButton() {
   availabilityToggleButton.textContent = currentAvailabilityOpen
-    ? "Set Conduit closed"
-    : "Set Conduit open";
+    ? "Set Grabbit closed"
+    : "Set Grabbit open";
 }
 
 function formatCurrency(amountTotal, currency) {
@@ -254,7 +254,7 @@ availabilityToggleButton.addEventListener("click", async () => {
 
     currentAvailabilityOpen = Boolean(payload.isOpen);
     renderAvailabilityButton();
-    setStatus(`Conduit is now ${currentAvailabilityOpen ? "open" : "closed"}.`);
+    setStatus(`Grabbit is now ${currentAvailabilityOpen ? "open" : "closed"}.`);
   } catch (error) {
     setStatus(error.message || "Unable to update live availability.");
   } finally {

@@ -2,7 +2,7 @@
   "name": "boost-boss",
   "version": "1.0.0",
   "private": true,
-  "description": "Conduit ordering site with manual order logging",
+  "description": "Grabbit ordering site with manual order logging",
   "scripts": {
     "start": "node server.js"
   },
