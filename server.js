@@ -337,7 +337,7 @@ function isAdminAuthenticated(req) {
   }
 
   const cookies = parseCookies(req);
-  return cookies["boostboss_admin"] === adminPassword;
+  return cookies["grabbit_admin"] === adminPassword;
 }
 
 function requireAdmin(req, res, next) {
@@ -492,7 +492,7 @@ app.post("/api/admin/login", (req, res) => {
 
   res.setHeader(
     "Set-Cookie",
-    `boostboss_admin=${encodeURIComponent(adminPassword)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=28800`
+    `grabbit_admin=${encodeURIComponent(adminPassword)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=28800`
   );
   return res.json({ authenticated: true });
 });
@@ -500,7 +500,7 @@ app.post("/api/admin/login", (req, res) => {
 app.post("/api/admin/logout", (_req, res) => {
   res.setHeader(
     "Set-Cookie",
-    "boostboss_admin=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0"
+    "grabbit_admin=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0"
   );
   return res.json({ authenticated: false });
 });
