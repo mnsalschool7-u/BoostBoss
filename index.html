@@ -524,6 +524,53 @@
                 <p class="field-note hidden" id="feedback-message-status" role="status" aria-live="polite"></p>
               </form>
             </section>
+
+            <section class="feedback-card">
+              <p class="card-label">Event leftovers</p>
+              <h2 class="feedback-title">Share leftover food from an event.</h2>
+              <form class="feedback-form" id="event-food-form">
+                <div class="field-group">
+                  <label class="field-label" for="event-food-location">Location</label>
+                  <div class="input-shell">
+                    <input
+                      id="event-food-location"
+                      name="location"
+                      type="text"
+                      placeholder="Where can people pick it up?"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="event-food-memo">Memo</label>
+                  <div class="input-shell">
+                    <textarea
+                      id="event-food-memo"
+                      name="memo"
+                      rows="4"
+                      placeholder="What food is left, how long it will be there, or anything people should know."
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="event-food-screenshot">Include screenshot</label>
+                  <div class="input-shell">
+                    <input
+                      id="event-food-screenshot"
+                      name="eventScreenshot"
+                      type="file"
+                      accept="image/*"
+                      required
+                    />
+                  </div>
+                </div>
+                <button type="submit" class="secondary-button" id="event-food-submit-button">
+                  Submit leftover food
+                </button>
+                <p class="field-note hidden" id="event-food-message-status" role="status" aria-live="polite"></p>
+              </form>
+            </section>
           </div>
         </div>
 

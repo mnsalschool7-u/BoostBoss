@@ -55,6 +55,9 @@ const submitButton = orderForm.querySelector('button[type="submit"]');
 const feedbackForm = document.getElementById("feedback-form");
 const feedbackSubmitButton = document.getElementById("feedback-submit-button");
 const feedbackMessageStatus = document.getElementById("feedback-message-status");
+const eventFoodForm = document.getElementById("event-food-form");
+const eventFoodSubmitButton = document.getElementById("event-food-submit-button");
+const eventFoodMessageStatus = document.getElementById("event-food-message-status");
 const buttonDefaultLabels = new Map([[submitButton, submitButton.textContent]]);
 let grabbersAvailable = false;
 let manualGrabbersAvailable = false;
@@ -101,6 +104,11 @@ function setButtonsDisabled(disabled, activeButton) {
 function setFeedbackMessage(message) {
   feedbackMessageStatus.textContent = message;
   feedbackMessageStatus.classList.toggle("hidden", !message);
+}
+
+function setEventFoodMessage(message) {
+  eventFoodMessageStatus.textContent = message;
+  eventFoodMessageStatus.classList.toggle("hidden", !message);
 }
 
 function hasFreeDeliveryPromo(code = promoCodeInput?.value || "") {
@@ -450,6 +458,39 @@ feedbackForm.addEventListener("submit", async (event) => {
   } finally {
     feedbackSubmitButton.disabled = false;
     feedbackSubmitButton.textContent = "Send suggestion";
+  }
+});
+
+eventFoodForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!eventFoodForm.reportValidity()) {
+    return;
+  }
+
+  const formData = new FormData(eventFoodForm);
+  eventFoodSubmitButton.disabled = true;
+  eventFoodSubmitButton.textContent = "Sending...";
+  setEventFoodMessage("");
+
+  try {
+    const response = await fetch("/api/event-food", {
+      method: "POST",
+      body: formData,
+    });
+    const payload = await response.json();
+
+    if (!response.ok) {
+      throw new Error(payload.error || "Unable to submit leftover food details.");
+    }
+
+    eventFoodForm.reset();
+    setEventFoodMessage("Leftover food submitted. We’ll share the pickup details.");
+  } catch (error) {
+    setEventFoodMessage(error.message || "Unable to submit leftover food right now.");
+  } finally {
+    eventFoodSubmitButton.disabled = false;
+    eventFoodSubmitButton.textContent = "Submit leftover food";
   }
 });
 

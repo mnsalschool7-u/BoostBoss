@@ -412,6 +412,28 @@ async function sendFeedbackNotification(feedback) {
   return true;
 }
 
+async function sendEventFoodNotification(submission) {
+  if (!mailTransport || !notificationEmail) {
+    return false;
+  }
+
+  await mailTransport.sendMail({
+    from: process.env.SMTP_USER,
+    to: notificationEmail,
+    subject: `New Grabbit event leftovers submission`,
+    text: [
+      `New event leftovers submission received.`,
+      ``,
+      `Location: ${submission.location}`,
+      `Memo: ${submission.memo}`,
+      `Screenshot: ${submission.screenshotPath ? `${process.env.PUBLIC_BASE_URL || ""}${submission.screenshotPath}` : "Uploaded on server"}`,
+      `Submission ID: ${submission.id}`,
+    ].join("\n"),
+  });
+
+  return true;
+}
+
 async function sendPokeNotification(order) {
   if (!pokeWebhookUrl || !pokeApiToken) {
     console.warn("Poke notification skipped: missing POKE_WEBHOOK_URL or POKE_API_TOKEN.");
@@ -569,6 +591,42 @@ app.post("/api/feedback", async (req, res) => {
   } catch (error) {
     console.error("Feedback notification failed:", error.message);
     return res.json({ ...feedback, notificationSent: false });
+  }
+});
+
+app.post("/api/event-food", upload.single("eventScreenshot"), async (req, res) => {
+  const location = `${req.body.location || ""}`.trim();
+  const memo = `${req.body.memo || ""}`.trim();
+
+  if (!location) {
+    return res.status(400).json({ error: "Please include the pickup location." });
+  }
+
+  if (!memo) {
+    return res.status(400).json({ error: "Please include a memo." });
+  }
+
+  if (!req.file) {
+    return res.status(400).json({ error: "Please include a screenshot." });
+  }
+
+  const submission = {
+    id: `event_food_${crypto.randomUUID()}`,
+    type: "event-food",
+    location,
+    memo,
+    screenshotPath: `/uploads/${req.file.filename}`,
+    createdAt: new Date().toISOString(),
+  };
+
+  await upsertFeedbackStore(submission);
+
+  try {
+    const notificationSent = await sendEventFoodNotification(submission);
+    return res.json({ ...submission, notificationSent });
+  } catch (error) {
+    console.error("Event food notification failed:", error.message);
+    return res.json({ ...submission, notificationSent: false });
   }
 });
 
