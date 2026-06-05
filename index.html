@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=campus-gate-2" />
   </head>
   <body>
     <main class="app-shell">
@@ -20,46 +20,79 @@
         <div class="hero-glow hero-glow-bottom"></div>
 
         <div class="screen" id="order-screen">
-          <header class="hero">
-            <div class="brand-row">
-              <div class="brand-copy">
-                <p class="eyebrow">Campus sprint delivery</p>
-                <h1>Grabbit</h1>
-              </div>
-              <div class="brand-mark" aria-hidden="true">
-                <img src="grabbit-logo.jpg" alt="" />
-              </div>
-            </div>
-
-            <p class="hero-copy">
-              Fast food pickup for Babson students who want to stay put while Grabbit does the running.
+          <section class="school-gateway" id="school-gateway">
+            <p class="card-label">Select your school</p>
+            <h2 class="gateway-title">Pick your campus to enter Grabbit.</h2>
+            <p class="gateway-copy">
+              We’re live at Babson first, with more campuses planned next.
             </p>
-            <a
-              class="instagram-link"
-              href="https://www.instagram.com/usegrabbit/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Follow us on Instagram
-            </a>
-          </header>
 
-          <section class="status-card">
-            <div>
-              <p class="card-label">Live availability</p>
-              <div class="status-line">
-                <span class="status-dot" id="status-dot" aria-hidden="true"></span>
-                <span class="status-text" id="status-text">Runners available</span>
-              </div>
-              <div class="sleepy-scene hidden" id="sleepy-scene" aria-hidden="true">
-                <span class="moon-shape"></span>
-                <span class="sleep-cloud">zzz</span>
-              </div>
+            <div class="school-grid" role="list" aria-label="Available schools">
+              <button class="school-option school-option-live" id="babson-school-button" type="button">
+                <span class="school-name">Babson</span>
+              </button>
+              <button class="school-option school-option-soon" type="button" disabled>
+                <span class="school-name">Bryant</span>
+              </button>
+              <button class="school-option school-option-soon" type="button" disabled>
+                <span class="school-name">Brandeis</span>
+              </button>
+              <button class="school-option school-option-soon" type="button" disabled>
+                <span class="school-name">Bentley</span>
+              </button>
+              <button class="school-option school-option-soon" type="button" disabled>
+                <span class="school-name">Wellesley</span>
+              </button>
+              <button class="school-option school-option-soon" type="button" disabled>
+                <span class="school-name">Olin</span>
+              </button>
+              <button class="school-option school-option-soon" type="button" disabled>
+                <span class="school-name">Northeastern</span>
+              </button>
             </div>
-            <span class="availability-pill" id="availability-pill">Live</span>
           </section>
 
-          <form id="order-form" class="order-form">
+          <div class="hidden" id="main-app-content" hidden>
+            <header class="hero">
+              <div class="brand-row">
+                <div class="brand-copy">
+                  <p class="eyebrow">Campus sprint delivery</p>
+                  <h1>Grabbit</h1>
+                </div>
+                <div class="brand-mark" aria-hidden="true">
+                  <img src="grabbit-logo.jpg" alt="" />
+                </div>
+              </div>
+
+              <p class="hero-copy">
+                Fast food pickup for Babson students who want to stay put while Grabbit does the running.
+              </p>
+              <a
+                class="instagram-link"
+                href="https://www.instagram.com/usegrabbit/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Follow us on Instagram
+              </a>
+            </header>
+
+            <section class="status-card">
+              <div>
+                <p class="card-label">Live availability</p>
+                <div class="status-line">
+                  <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+                  <span class="status-text" id="status-text">Grabbers available</span>
+                </div>
+                <div class="sleepy-scene hidden" id="sleepy-scene" aria-hidden="true">
+                  <span class="moon-shape"></span>
+                  <span class="sleep-cloud">zzz</span>
+                </div>
+              </div>
+              <span class="availability-pill" id="availability-pill">Live</span>
+            </section>
+
+            <form id="order-form" class="order-form">
             <p class="status-message hidden" id="checkout-message" role="status" aria-live="polite"></p>
             <section class="field-group">
               <label class="field-label">Delivery type</label>
@@ -431,68 +464,69 @@
               </article>
             </section>
 
-            <button type="submit" class="primary-button">Place order</button>
-          </form>
-
-          <section class="feedback-card faq-card">
-            <p class="card-label">FAQ</p>
-            <h2 class="feedback-title">Quick answers.</h2>
-            <div class="faq-item">
-              <p class="faq-question">Who are the runners?</p>
-              <p class="field-note">The runners are Babson students that need to get their steps in.</p>
-            </div>
-            <div class="faq-item">
-              <p class="faq-question">When are runners available?</p>
-              <p class="field-note">
-                Orders are accepted only when a runner is active, so if you can place an order, someone is ready to go.
-              </p>
-            </div>
-            <div class="faq-item">
-              <p class="faq-question">How will I know I got my order?</p>
-              <p class="field-note">
-                You will get a text notification with a photo of where it was left.
-              </p>
-            </div>
-            <div class="faq-item">
-              <p class="faq-question">Who’s Grabbit for?</p>
-              <p class="field-note">
-                Grabbit is for Babson students who are tired, sick, busy, stuck studying, or just do not feel like getting up but still want their food fast.
-              </p>
-            </div>
-            <div class="faq-item">
-              <p class="faq-question">When do I place a Grabbit order?</p>
-              <p class="field-note">As soon as you order your food.</p>
-            </div>
-          </section>
-
-          <section class="feedback-card">
-            <p class="card-label">Suggestions</p>
-            <h2 class="feedback-title">Help us improve Grabbit.</h2>
-            <form class="feedback-form" id="feedback-form">
-              <div class="input-shell">
-                <textarea
-                  id="feedback-message"
-                  name="message"
-                  rows="4"
-                  placeholder="Have an idea, issue, or suggestion? Tell us here."
-                  required
-                ></textarea>
-              </div>
-              <button type="submit" class="secondary-button" id="feedback-submit-button">
-                Send suggestion
-              </button>
-              <p class="field-note hidden" id="feedback-message-status" role="status" aria-live="polite"></p>
+              <button type="submit" class="primary-button">Place order</button>
             </form>
-          </section>
+
+            <section class="feedback-card faq-card">
+              <p class="card-label">FAQ</p>
+              <h2 class="feedback-title">Quick answers.</h2>
+              <div class="faq-item">
+                <p class="faq-question">Who are the grabbers?</p>
+                <p class="field-note">The grabbers are Babson students that need to get their steps in.</p>
+              </div>
+              <div class="faq-item">
+                <p class="faq-question">When are grabbers available?</p>
+                <p class="field-note">
+                  Orders are accepted only when a grabber is active, so if you can place an order, someone is ready to go.
+                </p>
+              </div>
+              <div class="faq-item">
+                <p class="faq-question">How will I know I got my order?</p>
+                <p class="field-note">
+                  You will get a text notification with a photo of where it was left.
+                </p>
+              </div>
+              <div class="faq-item">
+                <p class="faq-question">Who’s Grabbit for?</p>
+                <p class="field-note">
+                  Grabbit is for Babson students who are tired, sick, busy, stuck studying, or just do not feel like getting up but still want their food fast.
+                </p>
+              </div>
+              <div class="faq-item">
+                <p class="faq-question">When do I place a Grabbit order?</p>
+                <p class="field-note">As soon as you order your food.</p>
+              </div>
+            </section>
+
+            <section class="feedback-card">
+              <p class="card-label">Suggestions</p>
+              <h2 class="feedback-title">Help us improve Grabbit.</h2>
+              <form class="feedback-form" id="feedback-form">
+                <div class="input-shell">
+                  <textarea
+                    id="feedback-message"
+                    name="message"
+                    rows="4"
+                    placeholder="Have an idea, issue, or suggestion? Tell us here."
+                    required
+                  ></textarea>
+                </div>
+                <button type="submit" class="secondary-button" id="feedback-submit-button">
+                  Send suggestion
+                </button>
+                <p class="field-note hidden" id="feedback-message-status" role="status" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
         </div>
 
-        <div class="screen hidden" id="confirmation-screen">
+        <div class="screen hidden" id="confirmation-screen" hidden>
           <section class="confirmation-card">
             <div class="confirmation-icon">✓</div>
             <p class="eyebrow">Order confirmed</p>
             <h2>Grabbit is on the move.</h2>
             <p class="confirmation-copy">
-              Keep your phone nearby in case your runner texts.
+              Keep your phone nearby in case your grabber texts.
             </p>
 
             <div class="confirmation-details">
@@ -524,6 +558,6 @@
       </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=campus-gate-2"></script>
   </body>
 </html>

@@ -6,6 +6,9 @@ const sleepyScene = document.getElementById("sleepy-scene");
 const orderForm = document.getElementById("order-form");
 const orderScreen = document.getElementById("order-screen");
 const confirmationScreen = document.getElementById("confirmation-screen");
+const schoolGateway = document.getElementById("school-gateway");
+const mainAppContent = document.getElementById("main-app-content");
+const babsonSchoolButton = document.getElementById("babson-school-button");
 const confirmationLocation = document.getElementById("confirmation-location");
 const confirmationType = document.getElementById("confirmation-type");
 const confirmationPayment = document.getElementById("confirmation-payment");
@@ -53,9 +56,10 @@ const feedbackForm = document.getElementById("feedback-form");
 const feedbackSubmitButton = document.getElementById("feedback-submit-button");
 const feedbackMessageStatus = document.getElementById("feedback-message-status");
 const buttonDefaultLabels = new Map([[submitButton, submitButton.textContent]]);
-let runnersAvailable = false;
-let manualRunnersAvailable = false;
+let grabbersAvailable = false;
+let manualGrabbersAvailable = false;
 const FREE_DELIVERY_CODE = "CODE";
+let selectedSchool = "";
 
 function getEasternMinutesSinceMidnight() {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -121,12 +125,33 @@ function syncPromoState() {
   paymentSection.classList.toggle("hidden", promoApplied);
 }
 
+function revealSchoolExperience(school) {
+  selectedSchool = school;
+  schoolGateway.classList.add("hidden");
+  schoolGateway.hidden = true;
+  mainAppContent.classList.remove("hidden");
+  mainAppContent.hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showSchoolGateway() {
+  selectedSchool = "";
+  confirmationScreen.classList.add("hidden");
+  confirmationScreen.hidden = true;
+  orderScreen.classList.remove("hidden");
+  orderScreen.hidden = false;
+  schoolGateway.classList.remove("hidden");
+  schoolGateway.hidden = false;
+  mainAppContent.classList.add("hidden");
+  mainAppContent.hidden = true;
+}
+
 function renderAvailabilityState(isOpen) {
-  manualRunnersAvailable = isOpen;
+  manualGrabbersAvailable = isOpen;
 
   const isSleeping = isBoostBossSleeping();
   const canOrder = isOpen && !isSleeping;
-  runnersAvailable = canOrder;
+  grabbersAvailable = canOrder;
 
   statusCard.classList.toggle("sleeping-state", isSleeping);
   sleepyScene.classList.toggle("hidden", !isSleeping);
@@ -137,8 +162,8 @@ function renderAvailabilityState(isOpen) {
   statusText.textContent = isSleeping
     ? "Grabbit is sleeping"
     : isOpen
-      ? "Runners available"
-      : "No runners available";
+      ? "Grabbers available"
+      : "No grabbers available";
   availabilityPill.textContent = isSleeping ? "Sleeping" : isOpen ? "Live" : "Offline";
   orderForm.classList.toggle("form-disabled", !canOrder);
   orderForm.querySelectorAll("input, select, textarea, button").forEach((field) => {
@@ -149,7 +174,7 @@ function renderAvailabilityState(isOpen) {
       ? ""
       : isSleeping
         ? "Grabbit is sleeping from 12:30am to 7am. Orders reopen at 7am."
-        : "Ordering is paused right now because no runners are available."
+        : "Ordering is paused right now because no grabbers are available."
   );
 }
 
@@ -287,7 +312,9 @@ function showConfirmation(data) {
   confirmationSendTo.textContent = data.amountTotal === 0 ? "Promo applied - $0 due" : "571-619-4416";
 
   orderScreen.classList.add("hidden");
+  orderScreen.hidden = true;
   confirmationScreen.classList.remove("hidden");
+  confirmationScreen.hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -337,12 +364,12 @@ async function uploadScreenshot() {
 
 async function submitManualOrder(activeButton) {
   if (isBoostBossSleeping()) {
-    renderAvailabilityState(manualRunnersAvailable);
+    renderAvailabilityState(manualGrabbersAvailable);
     return;
   }
 
-  if (!runnersAvailable) {
-    setMessage("Ordering is paused right now because no runners are available.");
+  if (!grabbersAvailable) {
+    setMessage("Ordering is paused right now because no grabbers are available.");
     return;
   }
 
@@ -428,7 +455,15 @@ feedbackForm.addEventListener("submit", async (event) => {
 
 newOrderButton.addEventListener("click", () => {
   confirmationScreen.classList.add("hidden");
+  confirmationScreen.hidden = true;
   orderScreen.classList.remove("hidden");
+  orderScreen.hidden = false;
+  if (selectedSchool) {
+    schoolGateway.classList.add("hidden");
+    schoolGateway.hidden = true;
+    mainAppContent.classList.remove("hidden");
+    mainAppContent.hidden = false;
+  }
   orderForm.reset();
   loadAvailabilityState();
   syncLocationFields();
@@ -440,6 +475,16 @@ newOrderButton.addEventListener("click", () => {
   orderScreenshotInput.value = "";
 });
 
+babsonSchoolButton.addEventListener("click", () => {
+  revealSchoolExperience("Babson");
+  loadAvailabilityState();
+  syncLocationFields();
+  syncDeliveryFields();
+  syncPromoState();
+  syncPaymentFields();
+});
+
+showSchoolGateway();
 loadAvailabilityState();
 syncLocationFields();
 syncDeliveryFields();
@@ -447,6 +492,6 @@ syncPromoState();
 syncPaymentFields();
 
 setInterval(() => {
-  renderAvailabilityState(manualRunnersAvailable);
+  renderAvailabilityState(manualGrabbersAvailable);
   syncLocationFields();
 }, 60 * 1000);
