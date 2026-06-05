@@ -26,7 +26,7 @@ const ordersFile = path.join(dataDir, "orders.json");
 const feedbackFile = path.join(dataDir, "feedback.json");
 const statusFile = path.join(dataDir, "status.json");
 const uploadsDir = path.join(dataDir, "uploads");
-const dbPool = databaseUrl
+let dbPool = databaseUrl
   ? new Pool({
       connectionString: databaseUrl,
       ssl: process.env.DATABASE_SSL === "false" ? false : { rejectUnauthorized: false },
@@ -178,29 +178,41 @@ async function initDatabase() {
     return;
   }
 
-  await dbPool.query(`
-    CREATE TABLE IF NOT EXISTS app_state (
-      key TEXT PRIMARY KEY,
-      value JSONB NOT NULL,
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-  `);
+  try {
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS app_state (
+        key TEXT PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
 
-  await dbPool.query(`
-    CREATE TABLE IF NOT EXISTS orders (
-      id TEXT PRIMARY KEY,
-      data JSONB NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-  `);
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id TEXT PRIMARY KEY,
+        data JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
 
-  await dbPool.query(`
-    CREATE TABLE IF NOT EXISTS feedback (
-      id TEXT PRIMARY KEY,
-      data JSONB NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-  `);
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS feedback (
+        id TEXT PRIMARY KEY,
+        data JSONB NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+  } catch (error) {
+    console.error("Database initialization failed, falling back to local file persistence:", error);
+
+    try {
+      await dbPool.end();
+    } catch (_shutdownError) {
+      // Ignore pool shutdown errors during fallback.
+    }
+
+    dbPool = null;
+  }
 }
 
 async function readOrdersStore() {
@@ -632,8 +644,4 @@ initDatabase()
       console.log(`Grabbit is running at http://localhost:${port}`);
       console.log(dbPool ? "Using Postgres persistence." : "Using local file persistence.");
     });
-  })
-  .catch((error) => {
-    console.error("Unable to initialize persistent storage:", error);
-    process.exit(1);
   });
