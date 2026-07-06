@@ -699,7 +699,7 @@ if (missingEnvVars.length > 0) {
 initDatabase()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Grabbit is running at http://localhost:${port}`);
+      console.log(`Pequod AI is running at http://localhost:${port}`);
       console.log(dbPool ? "Using Postgres persistence." : "Using local file persistence.");
     });
   });

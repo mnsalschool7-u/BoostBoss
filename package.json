@@ -1,8 +1,8 @@
 {
-  "name": "boost-boss",
+  "name": "pequod-ai",
   "version": "1.0.0",
   "private": true,
-  "description": "Grabbit ordering site with manual order logging",
+  "description": "Pequod AI trade operations landing website",
   "engines": {
     "node": ">=20.0.0"
   },
