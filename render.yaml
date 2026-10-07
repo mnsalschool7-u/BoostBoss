@@ -1,5 +1,17 @@
 services:
   - type: web
+    name: bow-universe
+    runtime: node
+    rootDir: bow-universe
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+
+  - type: web
     name: pequod-ai-trade-ops
     runtime: static
     branch: codex/pequod-ai-deploy

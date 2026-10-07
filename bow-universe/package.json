@@ -1,0 +1,14 @@
+{
+  "name": "bow-universe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A visual social map for the Babson–Olin–Wellesley community",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check public/app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

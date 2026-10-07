@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="theme-color" content="#070b17" />
+  <meta name="description" content="Discover the people building, leading, and connecting across Babson, Olin, and Wellesley." />
+  <title>BOW Universe — People are the constellations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=4" />
+</head>
+<body>
+  <a class="skip" href="#universe">Skip to universe</a>
+  <main id="universe" aria-label="BOW student universe">
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <canvas id="graph" aria-label="Interactive network of students. Use search or the people list to navigate."></canvas>
+    <div id="nodeLayer" aria-hidden="true"></div>
+
+    <header class="topbar glass">
+      <button class="brand" id="resetBtn" aria-label="Back to full universe">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>BOW <em>Universe</em></span>
+      </button>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+        <label class="sr-only" for="search">Search people, roles, organizations, projects</label>
+        <input id="search" type="search" autocomplete="off" placeholder="Search people, roles, organizations, projects…" />
+        <kbd>⌘ K</kbd>
+      </div>
+      <button class="add-btn" id="addBtn"><span>+</span> Add yourself</button>
+    </header>
+
+    <section class="hero" id="hero">
+      <p class="eyebrow"><span></span> Babson · Olin · Wellesley</p>
+      <h1>Three schools.<br><em>One universe of people.</em></h1>
+      <p>Discover who’s building, leading, creating, and connecting across the BOW community.</p>
+      <div class="hero-actions">
+        <button class="primary" id="exploreBtn">Explore the universe <span>↗</span></button>
+        <button class="text-btn" id="heroAddBtn">Add yourself <span>→</span></button>
+      </div>
+    </section>
+
+    <aside class="filters glass" aria-label="Filter students">
+      <span class="filter-label">Illuminate</span>
+      <button class="filter active" data-filter="all">Everyone</button>
+      <button class="filter" data-filter="Babson"><i class="dot babson"></i>Babson</button>
+      <button class="filter" data-filter="Olin"><i class="dot olin"></i>Olin</button>
+      <button class="filter" data-filter="Wellesley"><i class="dot wellesley"></i>Wellesley</button>
+      <button class="filter" data-filter="leaders">Leaders</button>
+    </aside>
+
+    <div class="search-results glass" id="searchResults" hidden></div>
+    <div class="tooltip glass" id="tooltip" role="status" hidden></div>
+
+    <div class="legend">
+      <span><i class="dot babson"></i>Babson</span><span><i class="dot olin"></i>Olin</span><span><i class="dot wellesley"></i>Wellesley</span>
+      <span class="live"><i></i><b id="peopleCount">42</b> people in this universe</span>
+    </div>
+    <div class="hint" id="hint"><span>↔</span> Drag to move · Scroll to zoom · Select a person</div>
+    <div class="zoom-controls glass" aria-label="Zoom controls">
+      <button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomReset" aria-label="Reset view">⌾</button>
+    </div>
+
+    <aside class="profile glass" id="profile" aria-label="Student profile" aria-hidden="true">
+      <button class="close" id="closeProfile" aria-label="Close profile">×</button>
+      <div id="profileContent"></div>
+    </aside>
+  </main>
+
+  <dialog id="onboarding">
+    <form id="joinForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow"><span></span> Join the map</p><h2>Add yourself to the<br><em>BOW universe.</em></h2></div><button class="close" value="cancel" formmethod="dialog" aria-label="Close">×</button></div>
+      <div class="steps"><i class="active"></i><i></i><i></i><i></i></div>
+      <section class="form-step active" data-step="0">
+        <span class="step-num">01 / 04 · Identity</span>
+        <label>Full name<input name="name" required placeholder="Your name" /></label>
+        <div class="two"><label>School<select name="school" required><option value="">Choose school</option><option>Babson</option><option>Olin</option><option>Wellesley</option></select></label><label>Class year<input name="year" required inputmode="numeric" placeholder="2029" /></label></div>
+        <label>Major or field<input name="major" required placeholder="Computing & Design" /></label>
+      </section>
+      <section class="form-step" data-step="1"><span class="step-num">02 / 04 · About</span><label>Short bio<textarea name="bio" maxlength="280" placeholder="What keeps you curious?"></textarea></label><label>Interests <small>Separate with commas</small><input name="interests" placeholder="climate tech, creative tools" /></label><label>Skills <small>Separate with commas</small><input name="skills" placeholder="prototyping, storytelling" /></label></section>
+      <section class="form-step" data-step="2"><span class="step-num">03 / 04 · What are you doing?</span><label>Current role<input name="role" placeholder="Campus Lead" /></label><label>Organization<input name="organization" placeholder="BOW Ventures" /></label><label>What are you building?<input name="project" placeholder="Project, startup, research, or initiative" /></label></section>
+      <section class="form-step" data-step="3"><span class="step-num">04 / 04 · Links</span><label>LinkedIn<input name="linkedin" type="url" placeholder="https://linkedin.com/in/…" /></label><label>GitHub or website<input name="website" type="url" placeholder="https://…" /></label><div class="finish-note">Connections are always confirmed by both people. You can find collaborators once your profile is live.</div></section>
+      <p class="form-error" id="formError" role="alert"></p>
+      <footer><button class="text-btn" type="button" id="prevStep" hidden>← Back</button><button class="primary" type="button" id="nextStep">Continue <span>→</span></button></footer>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/app.js?v=4" defer></script>
+</body>
+</html>
