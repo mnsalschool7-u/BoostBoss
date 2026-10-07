@@ -8,7 +8,13 @@
   const schoolColor = { Babson: "#74d6bb", Olin: "#f4a6c1", Wellesley: "#b7a7ff" };
 
   function resize() { dpr = Math.min(devicePixelRatio || 1, 2); width = innerWidth; height = innerHeight; [canvas, stars].forEach(c => { c.width=width*dpr;c.height=height*dpr;c.style.width=width+"px";c.style.height=height+"px"; }); drawStars(); }
-  function drawStars() { sctx.setTransform(dpr,0,0,dpr,0,0);sctx.clearRect(0,0,width,height);let r=mulberry32(72);for(let i=0;i<170;i++){let x=r()*width,y=r()*height,a=.08+r()*.3,z=r()*1.2;sctx.fillStyle=`rgba(220,228,255,${a})`;sctx.beginPath();sctx.arc(x,y,z,0,Math.PI*2);sctx.fill();} }
+  function drawStars() {
+    sctx.setTransform(dpr,0,0,dpr,0,0);sctx.clearRect(0,0,width,height);
+    const r=mulberry32(72), diagonal=Math.atan2(height,width), cx=width*.57, cy=height*.48;
+    sctx.save();sctx.translate(cx,cy);sctx.rotate(diagonal);const band=sctx.createLinearGradient(0,-height*.34,0,height*.34);band.addColorStop(0,"rgba(98,111,196,0)");band.addColorStop(.35,"rgba(127,132,216,.035)");band.addColorStop(.5,"rgba(221,216,255,.105)");band.addColorStop(.65,"rgba(100,143,207,.04)");band.addColorStop(1,"rgba(74,88,180,0)");sctx.fillStyle=band;sctx.fillRect(-width,-height*.34,width*2,height*.68);sctx.restore();
+    for(let i=0;i<260;i++){const x=r()*width,y=r()*height,a=.07+r()*.38,z=r()<.04?1.8:.25+r()*1.05;sctx.fillStyle=`rgba(${205+Math.floor(r()*50)},${210+Math.floor(r()*38)},255,${a})`;sctx.beginPath();sctx.arc(x,y,z,0,Math.PI*2);sctx.fill();}
+    sctx.save();sctx.translate(cx,cy);sctx.rotate(diagonal);for(let i=0;i<480;i++){const x=(r()-.5)*width*1.65,y=(r()-.5)*height*.28*(.25+r()),a=.05+r()*.35,z=.2+r()*1.1;sctx.fillStyle=i%11===0?`rgba(244,211,174,${a})`:`rgba(205,216,255,${a})`;sctx.beginPath();sctx.arc(x,y,z,0,Math.PI*2);sctx.fill();}sctx.restore();
+  }
   function mulberry32(a){return()=>{let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
   function searchable(p){return [p.name,p.school,p.major,p.role,p.bio,...p.skills,...p.interests,...p.organizations,...p.leadership.flatMap(x=>[x.title,x.organization]),...p.projects.flatMap(x=>[x.name,x.type,x.description])].join(" ").toLowerCase()}
   function matches(n){let q=!query||searchable(n).includes(query);let f=filter==="all"||(filter==="leaders"?n.leadership.length:n.school===filter);return q&&f}
