@@ -1,5 +1,12 @@
 # Pequod AI
 
+## Redesigned platform and ShipSmart
+
+Open `/shipsmart/` for shipping quote comparison, the historical illustrative
+demo, buyer charge calculation, and packaging checks. See [SHIPSMART.md](SHIPSMART.md)
+for setup, assumptions, tests, design notes, and live rate integration limitations.
+Run `npm test` and `npm run build` to verify and package the public site.
+
 Pequod AI is an AI powered trade operations landing site with a live LlamaParse document ingestion demo.
 
 ## Required dependencies

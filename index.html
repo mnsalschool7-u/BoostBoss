@@ -2,396 +2,187 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pequod AI | Clarity for every shipment</title>
     <meta
       name="description"
-      content="Pequod AI helps importers and exporters identify customs, classification, tariff, and documentation issues and resolve shipment exceptions faster."
+      content="Trade intelligence from product documentation to the shipping decision."
     />
-    <meta name="theme-color" content="#071624" />
-    <title>Pequod AI | Customs Exception Intelligence</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="design.css" />
   </head>
   <body>
-    <a class="skip-link" href="#main-content">Skip to main content</a>
-
-    <header class="site-header" id="top">
-      <div class="container nav-wrap">
-        <a class="brand" href="#top" aria-label="Pequod AI home">
-          <span class="brand-mark" aria-hidden="true">
-            <img src="assets/pequod-logo-mark.png" alt="" />
-          </span>
-          <span><span class="brand-name">PEQUOD</span> <em>AI</em></span>
-        </a>
-
-        <nav class="desktop-nav" aria-label="Primary navigation">
-          <a href="#platform">Platform</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#founder-story">Founder story</a>
-          <a href="#technology">Technology</a>
-        </nav>
-
-        <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
-          <span></span><span></span>
-        </button>
-      </div>
-      <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
-        <a href="#platform">Platform</a>
-        <a href="#how-it-works">How it works</a>
-        <a href="#founder-story">Founder story</a>
-        <a href="#technology">Technology</a>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="masthead">
+      <a class="wordmark" href="./"
+        ><img src="assets/pequod-logo-mark.png" alt="" />PEQUOD
+        <span>AI</span></a
+      >
+      <nav aria-label="Primary">
+        <a href="#platform">Platform</a><a href="#story">Our story</a
+        ><a href="demo/llamaparse/">Classification</a
+        ><a class="nav-action" href="shipsmart/">Open ShipSmart ↗</a>
       </nav>
     </header>
-
-    <main id="main-content">
-      <!-- Hero -->
-      <section class="hero section-dark">
-        <div class="hero-grid" aria-hidden="true"></div>
-        <div class="hero-glow" aria-hidden="true"></div>
-        <div class="container hero-layout">
-          <div class="hero-copy reveal">
-            <div class="eyebrow"><span></span> Customs exception intelligence</div>
-            <h1>Know why your shipment is stuck. Know what to do next.</h1>
-            <p class="hero-lede">
-              Pequod AI helps importers and exporters identify customs, classification, tariff, and documentation
-              issues before they compound into delays, fees, and trapped inventory.
-            </p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="#how-it-works">
-                See How It Works
-                <span aria-hidden="true">→</span>
-              </a>
-              <a class="button button-ghost" href="/demo/llamaparse/">View Demo</a>
-            </div>
-            <div class="hero-trust" aria-label="Pequod focus areas">
-              <span>Customs clearance</span>
-              <span>HTS classification</span>
-              <span>Exception resolution</span>
-            </div>
-          </div>
-
-          <div class="exception-console reveal" aria-label="Pequod workflow preview">
-            <div class="console-top">
-              <div class="window-brand">
-                <span class="mini-mark" aria-hidden="true">
-                  <img src="assets/pequod-logo-mark.png" alt="" />
-                </span>
-                <span>Pequod Exception Workspace</span>
-              </div>
-              <span class="status-pill">Action ready</span>
-            </div>
-
-            <div class="exception-alert">
-              <span>Shipment exception</span>
-              <h2>Container held pending classification review</h2>
-              <p>Broker notice, invoice, product specifications, and tariff context assembled for review.</p>
-            </div>
-
-            <div class="signal-grid">
-              <article>
-                <small>Likely issue</small>
-                <strong>HTS treatment needs support</strong>
-              </article>
-              <article>
-                <small>Exposure</small>
-                <strong>Storage fees and delayed release</strong>
-              </article>
-            </div>
-
-            <div class="resolution-card">
-              <small>Prepared next actions</small>
-              <ol>
-                <li>Compare product facts against classification rationale.</li>
-                <li>Identify missing country of origin and material support.</li>
-                <li>Prepare broker review packet with source evidence.</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Problem -->
-      <section class="problem-section" id="platform">
-        <div class="container split-layout">
-          <div class="section-heading reveal">
-            <div class="eyebrow eyebrow-dark"><span></span> The border problem</div>
-            <h2>Global trade still breaks at the border.</h2>
-          </div>
-          <div class="stacked-copy reveal">
-            <p>
-              Every imported product has to be classified before it can move through customs.
-              That classification helps determine what the product is, which regulations apply,
-              and what duties or tariffs may be charged.
-            </p>
-            <p>
-              But products do not always fit neatly into one category. A classification decision can affect landed cost,
-              trigger additional requirements, or contribute to a shipment being delayed while the importer tries to
-              understand what went wrong.
-            </p>
-          </div>
-        </div>
-
-        <div class="container question-card reveal">
-          <p>
-            When a shipment gets held, teams can end up jumping between customs notices, tariff schedules,
-            classification databases, broker emails, invoices, packing lists, bills of lading, and government guidance
-            just to answer one question:
-          </p>
-          <strong>Why is my shipment not moving?</strong>
-          <span>Every additional day can mean demurrage, detention, storage fees, inventory delays, and capital trapped in goods the business cannot access.</span>
-        </div>
-      </section>
-
-      <!-- Market signals -->
-      <section class="stats-section" aria-label="Trade operations statistics">
-        <div class="container stats-shell">
-          <div class="section-heading reveal">
-            <div class="eyebrow eyebrow-blue"><span></span> Why it matters</div>
-            <h2>The cost of customs friction compounds quickly.</h2>
-          </div>
-
-          <div class="stats-grid">
-            <article class="reveal">
-              <strong>$2,500+</strong>
-              <p>Average demurrage fees can cost more than $2,500 per container.</p>
-            </article>
-            <article class="reveal">
-              <strong>43%</strong>
-              <p>Of customs holdups are caused by classification and documentation error.</p>
-            </article>
-            <article class="reveal">
-              <strong>$7.4B</strong>
-              <p>Trade compliance is a $7.4 billion market.</p>
-            </article>
-            <article class="reveal">
-              <strong>1 in 3</strong>
-              <p>Global trade shipments get stuck at customs.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- Solution -->
-      <section class="solution-section section-dark">
-        <div class="container split-layout">
-          <div class="section-heading reveal">
-            <div class="eyebrow"><span></span> The Pequod answer</div>
-            <h2>Pequod turns customs exceptions into actionable next steps.</h2>
-          </div>
-          <div class="stacked-copy reveal">
-            <p>
-              Pequod reads the customs or broker notice alongside the underlying shipment documents.
-              It structures the issue and prepares the next steps for the importer or customs broker to review.
-            </p>
-            <div class="from-to-card">
-              <div>
-                <small>From</small>
-                <strong>My shipment is stuck.</strong>
-              </div>
-              <div>
-                <small>To</small>
-                <strong>Here is what may be causing it, what information matters, and what needs to happen next.</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="container issue-grid">
-          <article class="reveal">
-            <span>01</span>
-            <h3>HS and HTS classification issues</h3>
-            <p>Identify where product facts, classification logic, and tariff treatment need support.</p>
-          </article>
-          <article class="reveal">
-            <span>02</span>
-            <h3>Tariff and duty implications</h3>
-            <p>Surface where a change in treatment could materially affect landed cost.</p>
-          </article>
-          <article class="reveal">
-            <span>03</span>
-            <h3>Missing or inconsistent documents</h3>
-            <p>Compare notices, invoices, packing lists, origin support, and specifications.</p>
-          </article>
-          <article class="reveal">
-            <span>04</span>
-            <h3>Release blockers</h3>
-            <p>Organize possible reasons a shipment has not been released and what to review next.</p>
-          </article>
-        </div>
-      </section>
-
-      <!-- How it works -->
-      <section class="workflow-section" id="how-it-works">
-        <div class="container">
-          <div class="section-heading centered reveal">
-            <div class="eyebrow eyebrow-blue"><span></span> How it works</div>
-            <h2>From stuck shipment to resolution workflow.</h2>
-          </div>
-
-          <div class="workflow-grid">
-            <article class="reveal">
-              <span>01</span>
-              <h3>Upload the shipment context</h3>
-              <p>Provide the customs or broker notice with invoices, packing lists, bills of lading, product specs, certificates of origin, and supporting documents.</p>
-            </article>
-            <article class="reveal">
-              <span>02</span>
-              <h3>Pequod structures the transaction</h3>
-              <p>AI powered document intelligence extracts and organizes product, classification, tariff, origin, and shipment information.</p>
-            </article>
-            <article class="reveal">
-              <span>03</span>
-              <h3>Identify the likely issue</h3>
-              <p>Pequod surfaces potential classification, tariff, documentation, or customs issues contributing to the exception.</p>
-            </article>
-            <article class="reveal">
-              <span>04</span>
-              <h3>Prepare the next action</h3>
-              <p>Pequod creates a structured resolution workflow for the importer or customs broker to review and act on.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- Founder story -->
-      <section class="story-section" id="founder-story">
-        <div class="container story-shell">
-          <div class="story-label reveal">
-            <div class="eyebrow eyebrow-blue"><span></span> Founder story</div>
-            <h2>Built from firsthand experience moving goods across borders.</h2>
-          </div>
-          <div class="story-copy reveal">
-            <p>
-              I got involved in TradeTech through TerraLuxCraftworks, my Himalayan pink salt company.
-              I import products including Himalayan pink salt lamps, candles, foot detoxers, and urns directly
-              from suppliers in Pakistan.
-            </p>
-            <p>
-              When I started TerraLux, I assumed the hardest part would be finding customers or navigating Amazon.
-              It was not. One of the hardest moments came when a six figure cargo shipment became unexpectedly delayed
-              at the Port of Colombo in Sri Lanka.
-            </p>
-            <p>
-              Every additional day meant more demurrage and detention exposure, delayed inventory, and capital trapped
-              inside goods I could not access. Working backward through the shipment forced me to understand how customs
-              duties, classification, and tariff treatment could materially change the economics of a transaction.
-            </p>
-            <blockquote>
-              Why is it still so difficult for businesses to understand what a shipment will cost, what customs expects,
-              and what to do when something goes wrong?
-            </blockquote>
-            <p>That question became Pequod.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Why now -->
-      <section class="why-now-section section-dark">
-        <div class="container split-layout">
-          <div class="section-heading reveal">
-            <div class="eyebrow"><span></span> Why now</div>
-            <h2>Customs complexity is becoming more consequential.</h2>
-          </div>
-          <div class="stacked-copy reveal">
-            <p>
-              U.S. Customs and Border Protection processes tens of millions of import entries every year.
-              At the same time, tariff regimes, trade policies, product classifications, and compliance requirements continue to change.
-            </p>
-            <p>
-              Customs and classification are among the most consequential bottlenecks in cross border trade.
-              The cost of getting classification, tariff treatment, or customs documentation wrong can extend far beyond the duty itself.
-            </p>
-          </div>
-        </div>
-
-        <div class="container consequence-chain reveal" aria-label="Consequences of customs errors">
-          <span>Higher landed cost</span>
-          <span>Delayed release</span>
-          <span>Storage charges</span>
-          <span>Demurrage and detention</span>
-          <span>Trapped inventory</span>
-        </div>
-      </section>
-
-      <!-- Technology -->
-      <section class="technology-section" id="technology">
-        <div class="container tech-layout">
-          <div class="section-heading reveal">
-            <div class="eyebrow eyebrow-blue"><span></span> Technology</div>
-            <h2>Document intelligence built for trade workflows.</h2>
-          </div>
-          <div class="tech-card reveal">
-            <div class="technology-partner" aria-label="LlamaIndex">
-              <span>Built with</span>
-              <img src="assets/llamaindex-logo.svg" alt="LlamaIndex" />
-            </div>
-            <p>
-              Pequod’s backend uses LlamaIndex and LlamaParse to ingest and structure complex, unstructured trade documents.
-              After evaluating Pequod’s use case, LlamaIndex provided startup credits that helped subsidize development of the
-              document intelligence infrastructure.
-            </p>
-            <p>
-              Pequod is designed as a decision support and workflow layer for importers, exporters, and customs professionals,
-              not as a replacement for licensed customs brokers.
-            </p>
-            <a class="button button-secondary" href="/demo/llamaparse/">View Document Intelligence Demo</a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Team -->
-      <section class="team-photo-section" aria-label="Pequod advisor">
-        <div class="container team-photo-shell">
-          <div class="section-heading reveal">
-            <div class="eyebrow eyebrow-blue"><span></span> Team</div>
-            <h2>Advisor</h2>
-          </div>
-          <div class="team-photo-grid">
-            <article class="team-photo-card reveal">
-              <img src="assets/shakiri-murrani-advisor.jpg" alt="Shakiri Murrain" />
-              <div class="team-photo-caption">
-                <span>Advisor</span>
-                <h3>Shakiri Murrain</h3>
-                <p>
-                  Advises on international manufacturing, sourcing, product development, and real world trade
-                  operations across production and logistics.
-                </p>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <footer class="site-footer">
-      <div class="container footer-main">
+    <main id="main">
+      <section class="landing-hero wrap">
         <div>
-          <a class="brand" href="#top" aria-label="Pequod AI home">
-            <span class="brand-mark" aria-hidden="true">
-              <img src="assets/pequod-logo-mark.png" alt="" />
-            </span>
-            <span><span class="brand-name">PEQUOD</span> <em>AI</em></span>
-          </a>
-          <p>Resolving customs exceptions with intelligence.</p>
+          <p class="eyebrow">TRADE INTELLIGENCE / BUILT FOR THE REAL WORLD</p>
+          <h1>Every shipment.<br />A clearer <em>way forward.</em></h1>
+          <p class="intro">
+            Understand your product. Navigate customs. Make the shipping
+            decision with the evidence in front of you.
+          </p>
+          <div class="actions">
+            <a class="btn" href="shipsmart/">Explore ShipSmart ↗</a
+            ><a class="text-link" href="demo/llamaparse/"
+              >Open classification workspace →</a
+            >
+          </div>
+          <p class="quiet">
+            Built from the realities of running an import business.
+          </p>
         </div>
-        <div class="footer-links">
-          <a href="#platform">Platform</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#technology">Technology</a>
+        <div class="route-sheet">
+          <div class="sheet-top">
+            <span>PEQUOD / SHIPMENT DECISIONS</span><span>01</span>
+          </div>
+          <div class="route-points">
+            <div><small>ORIGIN</small><strong>Product facts</strong></div>
+            <span>↓</span>
+            <div>
+              <small>CONTEXT</small><strong>Evidence &amp; constraints</strong>
+            </div>
+            <span>↓</span>
+            <div>
+              <small>DESTINATION</small><strong>An informed next step</strong>
+            </div>
+          </div>
+          <div class="sheet-bottom">Documents → Classification → Delivery</div>
         </div>
-      </div>
-      <div class="container footer-bottom">
-        <span>© 2026 Pequod AI. All rights reserved.</span>
-        <span>Built for customs clearance, classification, and exception resolution.</span>
-      </div>
+      </section>
+      <section class="platform-section" id="platform">
+        <div class="wrap">
+          <div class="section-intro">
+            <p class="eyebrow">THE PLATFORM</p>
+            <h2>Two workspaces.<br />One clearer view of trade.</h2>
+            <p>
+              Focused tools for the decisions between a product and its
+              destination.
+            </p>
+          </div>
+          <a class="product-row" href="demo/llamaparse/"
+            ><span class="index">01 / CUSTOMS</span>
+            <div>
+              <h3>Classification intelligence</h3>
+              <p>
+                Turn product PDFs into structured facts. Review missing
+                information, search customs precedent, and inspect candidate
+                HTSUS analysis alongside its source evidence.
+              </p>
+              <span class="text-link">Open classification workspace ↗</span>
+            </div>
+            <div class="mini-ledger">
+              <span>Product documentation <b>PDF</b></span
+              ><span>Classification facts <b>Evidence</b></span
+              ><span>CBP precedent <b>Retrieval</b></span
+              ><span>Candidate analysis <b>Review</b></span>
+            </div></a
+          >
+          <a class="product-row" href="shipsmart/"
+            ><span class="index">02 / SHIPPING</span>
+            <div>
+              <h3>Pequod ShipSmart</h3>
+              <p>
+                Find the cheapest way to ship on time, no matter where you buy
+                your label. Compare quotes, check arrival dates, and calculate
+                what to charge your buyer.
+              </p>
+              <span class="text-link">Compare shipping options ↗</span>
+            </div>
+            <div class="mini-ledger">
+              <span>One shipment <b>Multiple quotes</b></span
+              ><span>One deadline <b>Clear eligibility</b></span
+              ><span>Label + packaging + fees <b>Buyer charge</b></span>
+            </div></a
+          >
+        </div>
+      </section>
+      <section class="story wrap" id="story">
+        <p class="eyebrow">WHY PEQUOD EXISTS</p>
+        <div>
+          <h2>Trade is complicated.<br />The next step shouldn’t be.</h2>
+          <p class="intro">
+            Pequod began with TerraLuxCraftworks and a shipment held at the Port
+            of Colombo.
+          </p>
+          <p>
+            Importing Himalayan salt products from Pakistan exposed a difficult
+            reality: when cargo stops moving, the information needed to resolve
+            it is scattered across documents, broker emails, tariff schedules,
+            and freight systems.
+          </p>
+          <p>
+            Pequod brings that context together, so importers and customs
+            professionals can review what matters and decide what comes next.
+          </p>
+          <blockquote>
+            Built around the questions an importer actually has to answer.
+          </blockquote>
+        </div>
+      </section>
+      <section class="infrastructure">
+        <div class="wrap split">
+          <div>
+            <p class="eyebrow">DOCUMENT INFRASTRUCTURE</p>
+            <h2>Complex documents.<br />Usable evidence.</h2>
+          </div>
+          <div>
+            <img
+              class="partner-logo"
+              src="assets/llamaindex-logo.svg"
+              alt="LlamaIndex"
+              width="212"
+              height="40"
+            />
+            <p>
+              Pequod uses LlamaIndex and LlamaParse to ingest and structure
+              trade documents. Startup credits from LlamaIndex supported
+              development of this document intelligence layer.
+            </p>
+            <p class="quiet">
+              Pequod supports analysis and review. Final customs decisions
+              remain with the importer and qualified customs professionals.
+            </p>
+            <a class="text-link" href="demo/llamaparse/"
+              >Try the document workflow →</a
+            >
+          </div>
+        </div>
+      </section>
+      <section class="advisor wrap">
+        <div>
+          <p class="eyebrow">ADVISOR</p>
+          <h2>Experience beyond<br />the software.</h2>
+        </div>
+        <img
+          src="assets/shakiri-murrani-advisor.jpg"
+          alt="Shakiri Murrain"
+          width="180"
+          height="180"
+        />
+        <div>
+          <h3>Shakiri Murrain</h3>
+          <p>
+            International manufacturing, sourcing, product development, and
+            trade operations across production and logistics.
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer class="footer wrap">
+      <a class="wordmark" href="./">PEQUOD <span>AI</span></a>
+      <p>Coordinating global trade with intelligence.</p>
+      <a href="mailto:manha@pequodai.app">Contact ↗</a>
     </footer>
-
-    <script src="script.js"></script>
   </body>
 </html>

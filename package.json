@@ -7,7 +7,9 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test tests/shipsmart.test.mjs",
+    "build": "node scripts/build-site.cjs"
   },
   "dependencies": {
     "@llamaindex/llama-cloud": "^2.13.0",

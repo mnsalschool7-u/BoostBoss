@@ -17,6 +17,8 @@
     />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/demo/llamaparse/llamaparse-demo.css" />
+    <link rel="stylesheet" href="/design.css" />
+    <link rel="stylesheet" href="/demo/llamaparse/workspace.css" />
   </head>
   <body class="llamaparse-page">
     <a class="skip-link" href="#maincontent">Skip to main content</a>
@@ -40,6 +42,7 @@
       </a>
       <nav class="demo-nav" aria-label="Demo navigation">
         <a href="/">Home</a>
+        <a href="/shipsmart/">ShipSmart</a>
         <a href="#workspace">Workspace</a>
         <a href="#parseroutput">Parser output</a>
       </nav>
@@ -52,8 +55,8 @@
         <div class="demo-grid-bg" aria-hidden="true"></div>
         <div class="demo-glow" aria-hidden="true"></div>
         <div>
-          <p class="eyebrow"><span></span> Live document ingestion</p>
-          <h1>Trade Classification Intelligence Demo</h1>
+          <p class="eyebrow"><span></span> PEQUOD / CUSTOMS INTELLIGENCE</p>
+          <h1>Classification workspace</h1>
           <p>
             Upload product documentation. Pequod structures classification relevant facts with LlamaParse,
             retrieves relevant CBP precedent, and surfaces the evidence and information needed for customs analysis.
@@ -115,7 +118,7 @@
           <div class="panel-head">
             <div>
               <span class="micro-label">Document ingestion</span>
-              <h2>Live parser status</h2>
+              <h2>Document progress</h2>
             </div>
             <span class="status-chip idle" id="parse-status">Waiting</span>
           </div>
