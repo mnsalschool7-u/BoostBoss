@@ -368,6 +368,21 @@ blockquote {
   margin: 0;
   color: var(--muted);
 }
+/* Editorial context sections retain the original product narrative. */
+.context-section{padding-block:80px}
+.context-section p,.context-topics p,.context-steps p{color:var(--muted)}
+.context-note{margin-top:28px;font-size:14px;line-height:1.8}
+.context-divider{border-top:1px solid var(--line)}
+.context-steps{list-style:none;padding:0;margin:48px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 64px}
+.context-steps li{border-top:1px solid var(--line);padding-top:24px}
+.context-steps h3{margin:12px 0}
+.context-band{background:var(--navy);color:white;padding-block:70px}
+.context-band .eyebrow,.context-band p{color:#bdcec8}
+.context-topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 64px;margin-top:36px}
+.context-topics article{border-top:1px solid #40545d;padding-top:24px}
+.context-topics h3{font-size:21px}
+.advisor details{font-size:14px}
+@media(max-width:760px){.context-section{padding-block:48px}.context-steps,.context-topics{grid-template-columns:1fr;gap:24px}.context-band{padding-block:48px}}
 /* Compact controls and evidence oriented results. */
 .workspace-grid > * {
   min-width: 0;
